@@ -25,6 +25,7 @@ repo/
 .project
 .settings
 bin/
+target/
 
 # Mac
 .DS_Store
@@ -32,3 +33,4 @@ bin/
 # Windows
 Thumbs.db
 /.recommenders/
+/target/
