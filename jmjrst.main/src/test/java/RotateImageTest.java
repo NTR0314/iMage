@@ -27,22 +27,13 @@ public class RotateImageTest {
 	private static final String IMAGEPATH = "src/test/resources/picture.jpg";
 
 	/**
-	 * Load picture from resources
-	 * 
-	 * @throws IOException
-	 *             if invalid path
-	 */
-	@BeforeClass
-	public void getImage() throws IOException {
-		this.image = ImageIO.read(new File(IMAGEPATH));
-	}
-
-	/**
-	 * Initialize generator
+	 * Initialize generator and load picture
+	 * @throws IOException on invalid path
 	 */
 	@Before
-	public void setUp() {
+	public void setUp() throws IOException {
 		this.generator = new Generator(null, 0);
+		this.image = ImageIO.read(new File(IMAGEPATH));
 	}
 	
 	/**
@@ -68,4 +59,13 @@ public class RotateImageTest {
 	public void nullImage() {
 		assertNull(this.generator.rotateImage(null, 0.0));
 	}
+	
+	/**
+	 * Testing illegal arguments
+	 */
+	@Test(expected = IllegalArgumentException.class)
+	public void argumentTest() {
+		this.generator.rotateImage(this.image, 0.5);
+	}
+	
 }
