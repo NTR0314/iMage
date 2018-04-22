@@ -326,7 +326,7 @@ public class TableGalerie {
         Thread consumerThreads[] = new Thread[cpus];
         for (int i = 0; i < cpus; i++)
         {
-          consumerThreads[i] = new Thread(new Consumer(producer,m,false,null)); 
+          consumerThreads[i] = new Thread(new Consumer(producer, m, false, null)); 
         }
 
         producerThread.start();
