@@ -1,7 +1,0 @@
-<changelog><commit>
-					<time>1524341675</time>
-					<sha1>1023ff80e4e0bffcbee08b8ab8c2d99bb81fc2f2</sha1>
-					<author>Oswald Zink</author>
-					<branches>refs/heads/master</branches>
-					<msg>Added gitignore</msg>
-				</commit></changelog>

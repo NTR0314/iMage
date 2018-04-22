@@ -8,7 +8,7 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 	<groupId>swt1.ub1.a1</groupId>
-	<artifactId>jmjrst.main</artifactId>
+	<artifactId>2053536</artifactId>
 	<build>
 		<plugins>
 			<plugin>
