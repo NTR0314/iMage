@@ -72,8 +72,7 @@ public class List extends JScrollPane {
           Thread x = new Thread(new Runnable()
           {
 
-            public void run()
-            {
+            public void run() {
               try
               {
                 t.setThumb(new Thumbnail((File)selected_values[0], 220,165));
