@@ -112,7 +112,7 @@ public class RotateImageTest {
 		//comparing pixels
 		for (int i = 0; i < this.image.getWidth(); i++) {
 			for (int j = 0; j < this.image.getHeight(); j++) {
-				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(i, this.image.getHeight() - j));
+				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(this.image.getWidth() - i - 1, this.image.getHeight() - j - 1));
 			}
 		}
 	}
