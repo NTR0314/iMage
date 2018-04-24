@@ -25,7 +25,7 @@ import org.junit.Test;
  * @author Oswald
  *
  */
-public class RotateImageTest {
+public class GeneratorTest {
 
 	private Generator generator;
 	private BufferedImage image;
