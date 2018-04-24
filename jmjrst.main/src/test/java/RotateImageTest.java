@@ -5,6 +5,8 @@ import static org.junit.Assert.assertTrue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.imageio.ImageIO;
 
@@ -43,7 +45,10 @@ public class RotateImageTest {
 	 * Reset generator
 	 */
 	@After
-	public void tearDown() {
+	public void tearDown() throws IOException {
+		//save image
+		String datestring = new SimpleDateFormat("HHmmss_SSS").format(new Date());
+		ImageIO.write(this.image, "jpg", new File("/target/dataTest/rotatedPicture_" + datestring + ".jpg"));
 		// reset
 		this.generator = null;
 		this.image = null;
@@ -55,6 +60,7 @@ public class RotateImageTest {
 	@Test
 	public void notRotating() {
 		assertEquals(this.image, this.generator.rotateImage(this.image, 0.0));
+		this.image = this.generator.rotateImage(this.image, 0.0);
 	}
 
 	/**
@@ -95,6 +101,8 @@ public class RotateImageTest {
 				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(i, j));
 			}
 		}
+		
+		this.image = rotatedImage;
 	}
 	
 	/**
@@ -115,5 +123,6 @@ public class RotateImageTest {
 				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(this.image.getWidth() - i - 1, this.image.getHeight() - j - 1));
 			}
 		}
+		this.image = rotatedImage;
 	}
 }
