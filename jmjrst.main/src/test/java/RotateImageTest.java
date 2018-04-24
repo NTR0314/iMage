@@ -48,7 +48,8 @@ public class RotateImageTest {
 	public void tearDown() throws IOException {
 		//save image
 		String datestring = new SimpleDateFormat("HHmmss_SSS").format(new Date());
-		ImageIO.write(this.image, "jpg", new File("/target/dataTest/rotatedPicture_" + datestring + ".jpg"));
+		File outputFile = new File("target/dataTest/rotatedPicture_" + datestring + ".jpg");
+		ImageIO.write(this.image, "jpg", outputFile);
 		// reset
 		this.generator = null;
 		this.image = null;
