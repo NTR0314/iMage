@@ -676,7 +676,7 @@ public class Generator {
 			transform.rotate(Generator.ROTATE_270);
 			width = image.getHeight(null); // swap
 			height = image.getWidth(null);
-		} else if ((rotate - Math.toRadians(180.0)) < 0.000001) { //using delta, since only allowed to change method code not whole class
+		} else if (Math.abs((rotate - Math.toRadians(180.0))) < 0.001d) { //using delta, since only allowed to change method code not whole class
 			return rotateImage(rotateImage(image, Generator.ROTATE_90), Generator.ROTATE_90);
 		
 		} else
