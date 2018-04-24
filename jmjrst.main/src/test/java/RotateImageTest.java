@@ -75,7 +75,7 @@ public class RotateImageTest {
 
 	/**
 	 * Test if test image rotated by 360 degrees results is the same image, (it
-	 * should be)
+	 * should be) testing is done by comparing each pixel asserting they are the same
 	 */
 	@Test
 	public void rotateThreeSixty() {
@@ -90,11 +90,30 @@ public class RotateImageTest {
 		assertEquals(this.image.getWidth(), rotatedImage.getWidth());
 
 		// Test if all pixels are the same color as before
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
-				assertEquals(image.getRGB(i, j), rotatedImage.getRGB(i, j));
+		for (int i = 0; i < this.image.getWidth(); i++) {
+			for (int j = 0; j < this.image.getHeight(); j++) {
+				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(i, j));
 			}
 		}
 	}
-
+	
+	/**
+	 * Test if rotating picture by 180degrees results in upside down as expected. We test if
+	 * each pixel is mirrored at x-axis middle 
+	 */
+	@Test
+	public void upsideDown() {
+		BufferedImage rotatedImage = this.generator.rotateImage(this.image, Math.toRadians(180.0)); //rotate 180 degree
+		
+		//Making sure height and width of picture are staying the same
+		assertEquals(this.image.getHeight(), rotatedImage.getHeight());
+		assertEquals(this.image.getWidth(), rotatedImage.getWidth());
+		
+		//comparing pixels
+		for (int i = 0; i < this.image.getWidth(); i++) {
+			for (int j = 0; j < this.image.getHeight(); j++) {
+				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(i, this.image.getHeight() - j));
+			}
+		}
+	}
 }
