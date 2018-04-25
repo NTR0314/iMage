@@ -166,13 +166,13 @@ public class GeneratorTest {
 	 * Test rotate function of Generator
 	 * @throws IOException when reading image or copying file goes wrong
 	 */
-	@Ignore	//because jmjrst in order for maven to work
+	@Test	//because jmjrst in order for maven to work
 	public void rotateIntTest() throws IOException {
-		File testFile = new File("IMAGEPATH");
-		File duplicate = new File("src/test/resources/duplicate");
+		File testFile = new File(IMAGEPATH);
+		File duplicate = new File("src/test/resources/duplicate.jpg");
 		
 		//create copy so testfile doesnt get changed
-		Files.copy(testFile.toPath(), duplicate.toPath(), StandardCopyOption.REPLACE_EXISTING); //TODO fix copying
+		Files.copy(testFile.toPath(), duplicate.toPath(), StandardCopyOption.REPLACE_EXISTING);
 		
 		generator.rotate(duplicate, 90);
 		
