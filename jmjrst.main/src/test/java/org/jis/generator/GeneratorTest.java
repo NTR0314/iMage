@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -157,5 +159,27 @@ public class GeneratorTest {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * Test rotate function of Generator
+	 * @throws IOException when reading image or copying file goes wrong
+	 */
+	@Test	//because jmjrst in order for maven to work
+	public void rotateIntTest() throws IOException {
+		File testFile = new File("IMAGEPATH");
+		File duplicate = new File("src/test/resources/duplicate");
+		
+		//create copy so testfile doesnt get changed
+		Files.copy(testFile.toPath(), duplicate.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		
+		generator.rotate(duplicate, 90);
+		
+		BufferedImage after = ImageIO.read(duplicate);
+		
+		assertEquals(after.getHeight(), this.image.getWidth());
+		assertEquals(after.getWidth(), this.image.getHeight());
+		
+		
 	}
 }
