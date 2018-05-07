@@ -3,18 +3,29 @@
 \usepackage[T1]{fontenc}    % avoid garbled Unicode text in pdf
 \usepackage[german]{babel}  % german hyphenation, quotes, etc
 \usepackage{hyperref}       % detailed hyperlink/pdf configuration
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows}
 \hypersetup{                % ‘texdoc hyperref‘ for options
-pdftitle={SWT1: Lastenheftvorlage},%
+pdftitle={SWT1: Lastenheft},%
 }
-\usepackage{graphicx}       % provides commands for including figures
 \usepackage{csquotes}       % provides \enquote{} macro for "quotes"
 \usepackage[nonumberlist]{glossaries}     % provides glossary commands
 \usepackage{enumitem}
 
 \makenoidxglossaries
-%
-% % Glossareinträge
-%
+
+\newglossaryentry{sws}
+{
+  name=Schlagwortsuche,
+  description={Bildsuche die mit Schlagw\"ortern arbeitet. Bilder werden nach Relevanz zur\"uckgegeben}
+}
+
+\newglossaryentry{av}
+{
+	name=Archivbild,
+	plural=Archivbilder,
+	description={Vorproduzierten Aufnahmen, die meist über Bildagenturen vertrieben und verkauft werden}
+}
 
 \title{SWT1: Lastenheft}
 \author{Oswald Zink, 2053536}
@@ -23,7 +34,7 @@ pdftitle={SWT1: Lastenheftvorlage},%
 
 \maketitle
 \section{Zielbestimmung}
-Die Firma Pear Corp. soll durch das Produkt iMage in der Lage sein Archivbilder zu speichern und zum Verkaufen anbieten zu k\"onnen. Die Bilder sollen dabei verschieden ausgegeben werden k\"onnen(e.g. Dateiformat, Gr\"osse)
+Die Firma Pear Corp. soll durch das Produkt iMage in der Lage sein \glspl{av} zu speichern und zum Verkaufen anbieten zu k\"onnen. Die Bilder sollen dabei verschieden ausgegeben werden k\"onnen(e.g. Dateiformat, Gr\"osse)
 
 \section{Produkteinsatz}
 Das Produkt dient der Firma Pear Corp. zur Verwaltung, \"Anderung und Verkauf von Archivbildern.
@@ -52,37 +63,108 @@ Plattform: Betriebssystem mit Java Support.
 
 \section{Nichtfunktionale Anforderungen}
 \begin{itemize}[nosep]
-\item[NF10] Die Schlagwortsuche dauert nicht l\"anger als 5 Sekunden.
-\item[NF20] Die Schlagwortsuche liefert bis zu 10 nach Relevanz sortierte Bilder zur\"uck.
+\item[NF10] Die \gls{sws} dauert nicht l\"anger als 5 Sekunden.
+\item[NF20] Die \gls{sws} liefert bis zu 10 nach Relevanz sortierte Bilder zur\"uck.
 \item[NF30] Alle Bilder sind in den 3 Dateitypen: JPG, PNG und TIFF bereitgestellt.
 \end{itemize}
 
 \section{Systemmodelle}
 
 \subsection{Szenarien}
-
+\subsubsection{Benutzung der Software}
+Der Nutzer startet iMage, und findet mit Hilfe der Schlagwortsuche ein Bild. Er klickt auf das Vorschaubild und w\"ahlt im Men\"u das Dateiformat JPG aus. Er entscheidet sich um und bricht den Kaufvorgang ab.
+\subsubsection{Schlagwortsuche}
+Beim Suchen eines Bildes nutzt der Kunde die Schlagwortsuche. Dort tippt er Schlagworte ein und erh\"alt innerhalb von 5 Sekunden bis zu 10 nach Relevanz sortierte Bilder.
 \subsection{Anwendungsfälle}
-\subsubsection{Seminarorganisation}
-\begin{center}
-\includegraphics[width=0.8\textwidth]{szenario_seminarorganisation.pdf}
-\end{center}
+\subsubsection{Bildkauf}
+\begin{tikzpicture}
+\draw (3,0) -- (3,10) -- (13,10) -- (13,0) -- (3,0);
+\node (image) at (3.75,9.5) {iMage};
 
-Akteure: Kundensachbearbeiter, Seminarsachbearbeiter.
+\node (B) at (1,9) {Kunde};
+\node (A) at (1,8) [minimum size=1cm,circle,draw] {};
+\draw (A) -- (1,6.5); 			%koerper
+\draw (0.5,7.25) -- (1.5,7.25);	%arme
+\draw (1,6.5) -- (0.5,6);		%linker
+\draw (1,6.5) -- (1.5,6);
+\node (Kunde) at (1,7.25) {};
+\node (Suche) at (10,3) [draw, ellipse] {Suche von Bild};
 
-Anwendungsfälle: Kundenverwaltung, Rechnungsstellung, Anfragebearbeitung, Dozentenverwaltung, Listenverwaltung, Seminarverwaltung.
+\node (Kauf) at (5.5,7) [draw, ellipse] {Kauf von Bild};
+\draw [green] (Kunde) -- (Kauf);
 
-Textuelle Beschreibung: (folgt)
+\node (Format) at (10,9) [draw, ellipse, align=left] {Auswahl von Gr\"osse \\ und Dateiformat};
+\draw [green, dashed, ->, very thick] (Kauf) -- (Format);
+\path (Kauf) -- (Format) node [midway, above, sloped] (TextNode) {<<includes>>};
+
+\draw [green, dashed, ->, very thick] (Kauf) -- (Suche);
+\path (Kauf) -- (Suche) node [midway, above, sloped] (TextNode) {<<includes>>};
+
+\node (C) at (1,5) {Mitarbeiter};
+\node (D) at (1,4) [minimum size=1cm,circle,draw] {};
+\draw (D) -- (1,2.5); 			%koerper
+\draw (0.5,3.25) -- (1.5,3.25);	%arme
+\draw (1,2.5) -- (0.5,2);		%linker
+\draw (1,2.5) -- (1.5,2);
+\node (Hund) at (1,3) {};
+\node (Hinz) at (7,1) [draw, align=left, ellipse] {Hinzuf\"ugen/Entfernen\\ von Bildern};
+\draw [green] (Hund) -- (Hinz);
 
 
+\end{tikzpicture}
 
-%
-% % Automatisch generiertes Glossar (Latex zwei mal ausführen um Glossar anzuzeigen)
-%
-%\glsaddall % das sorgt dafür, dass alles Glossareinträge gedruckt werden, nicht nur die verwendeten. Das sollte nicht nötig sein!
+
+\textbf{Akteure:} Kunde, Mitarbeiter
+
+\textbf{Anwendungsfälle:} Kauf von Bild, Suche von Bild, Auswahl von Gr\"osse und Dateiformat, Hinzuf\"ugen/Entfernen von Bildern
+
+\textbf{Textuelle Beschreibung:}
+
+\begin{itemize}
+
+
+\item Name: Kauf von Bild   
+
+\item Teilnehmende Akteure: Kunde
+
+\item Eingangsbedingung: Kunde will Archivbild kaufen
+
+\item Ausgangsbedingung: Kunde er\"ahlt Bild.
+
+\item Ereignisfluss: 
+\begin{itemize}
+\item Kunde \"offnet Image
+\item Kunde sucht Bild mittels Schlagwortsuche
+\item Kunde w\"ahlt gew\"unschtes Dateiformat aus
+\item Kunde \"ahlt kaufen aus
+\item Kunde hat die M\"oglichkeit den Kaufvorgang abzubrechen
+\item Kunde bezahlt und erh\"ahlt Bild
+\end{itemize}
+
+\end{itemize}
+
+\begin{itemize}
+
+
+\item Name: Entfernen von Bildern
+
+\item Teilnehmende Akteure: Mitarbeiter
+
+\item Eingangsbedingung: Mitarbeiter will Bild l\"oschen
+
+\item Ausgangsbedingung: Bild gel\"oscht
+
+\item Ereignisfluss: 
+\begin{itemize}
+\item Mitarbeiter \"offnet Image
+\item Mitarbeiter sucht Bild mittels Schlagwortsuche
+\item Mitarbeiter w\"ahlt l\"oschen aus
+\item Bild gel\"oscht.
+\end{itemize}
+
+\end{itemize}
+
+\glsaddall
 \printnoidxglossaries
-Siehe \url{https://en.wikibooks.org/wiki/LaTeX/Glossary}.
-
-
-
 
 \end{document}
