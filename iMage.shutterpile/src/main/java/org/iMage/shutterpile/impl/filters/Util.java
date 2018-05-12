@@ -11,4 +11,20 @@ public class Util {
 		WritableRaster raster = bi.copyData(null);
 		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
+	
+	static int getAlpha(int argb) {
+		return (argb >>> 24) & 0xFF;
+	}
+	
+	static int getRed(int argb) {
+		return (argb >> 16) & 0xFF;
+	}
+	
+	static int getGreen(int argb) {
+		return (argb >> 8) & 0xFF;
+	}
+	
+	static int getBlue(int argb) {
+		return argb & 0xFF;
+	}
 }
