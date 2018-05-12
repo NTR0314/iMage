@@ -3,7 +3,7 @@
  */
 package org.iMage.shutterpile.impl.filters;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -22,44 +22,73 @@ import org.junit.Test;
  * @author Oswald
  *
  */
-public class WatermarkFilterTest {
-	private static final String PICTURE2 = "src/test/resources/colorfulPicture_alpha.png";
-	private static final String WATERMARK1 = "src/test/resources/pearWatermark.png";
-	private BufferedImage pic2;
-	private BufferedImage wm1;
-	private BufferedImage test;
-	private WatermarkFilter wmf;
+public class FilterTest {
+	private static final String PATH = "src/test/resources/";
+	private static final String BUNT = PATH + "colorfulPicture_alpha.png";
+	private static final String PEAR = PATH + "pearWatermark.png";
+	private static final String TICHY_ORIGINAL = PATH + "tichyWatermark_input_no_alpha.png";
+	private BufferedImage picBunt;
+	private BufferedImage wmPear;
+	private BufferedImage wmTichyOg;
 	
+	private BufferedImage preTest;
+	private BufferedImage result;
+	
+	/**
+	 * Setting up testing by loading images and watermarks
+	 * @throws IOException if error while loading images
+	 */
 	@Before
 	public void setUp() throws IOException {
-		pic2 = ImageIO.read(new File(PICTURE2));
-		wm1 = ImageIO.read(new File(WATERMARK1));
-		
-		this.wmf = new WatermarkFilter(wm1, 10);
+		picBunt = ImageIO.read(new File(BUNT));
+		wmPear = ImageIO.read(new File(PEAR));
+		wmTichyOg = ImageIO.read(new File(TICHY_ORIGINAL));
 	}
 
+	/**
+	 * Teardown: saving both orignal and test image also resetting loaded images
+	 * @throws Exception if error while saving images.
+	 */
 	@After
 	public void tearDown() throws Exception {
 		//saving both images so i can get a visual on how/if my filter works saving both orignal and after
 		String datestring = new SimpleDateFormat("HHmmss_SSS").format(new Date());
-		File outputFile = new File("target/dataTest/rotatedPicture_" + datestring + ".png");
-		ImageIO.write(this.test, "png", outputFile);
+		File outputFile = new File("target/dataTest/rotatedPicture_" + datestring + "_result_" + ".png");
+		ImageIO.write(this.result, "png", outputFile);
 		
 		String datestring2 = new SimpleDateFormat("HHmmss_SSS").format(new Date());
-		File outputFile2 = new File("target/dataTest/rotatedPicture_" + datestring2 + ".png");
-		ImageIO.write(this.pic2, "png", outputFile2);
+		File outputFile2 = new File("target/dataTest/rotatedPicture_" + datestring2 + "_original_" + ".png");
+		ImageIO.write(this.preTest, "png", outputFile2);
 		
-		this.pic2 = null;
+		//reset
+		this.picBunt = null;
 	}
 
-	@Ignore //not sure why this doesnt work, should count as a test though right? xD
-	public void test() {
-		this.test = wmf.apply(pic2);
+	/**
+	 * Ignored for now, because the test should work but doesn't
+	 */
+	@Ignore
+	public void testWatermarkfilter() {
+		WatermarkFilter wmf = new WatermarkFilter(wmPear, 10);
+		this.result = wmf.apply(picBunt);
 		
-		for (int i = 0; i < test.getWidth(); i++) {
-			for (int j = 0; j < test.getHeight(); j++) {
-				assertEquals(test.getRGB(i, j), pic2.getRGB(i, j));
+		for (int i = 0; i < result.getWidth(); i++) {
+			for (int j = 0; j < result.getHeight(); j++) {
+				assertEquals(result.getRGB(i, j), picBunt.getRGB(i, j));
 			}
 		}
+	}
+	
+	@Test
+	public void testGrayscaleFilter() {
+		this.preTest = wmTichyOg;
+		GrayscaleFilter gsf = new GrayscaleFilter();
+		
+		this.result = gsf.apply(wmTichyOg);
+		
+//		for (int i = 0; i < array.length; i++) {
+//			
+//		}
+		
 	}
 }

@@ -15,7 +15,7 @@ public class GrayscaleFilter implements IFilter {
 
 	@Override
 	public BufferedImage apply(BufferedImage arg0) {
-		BufferedImage image = arg0;
+		BufferedImage image = Util.deepCopy(arg0);
 
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
@@ -28,7 +28,7 @@ public class GrayscaleFilter implements IFilter {
 
 	private int calcRGB(int x, int y, BufferedImage image) {
 		int rgb = image.getRGB(x, y);
-		int alpha = (rgb >> 24) & 0xFF;
+		int alpha = (rgb >>> 24) & 0xFF;
 		int red = (rgb >> 16) & 0xFF;
 		int green = (rgb >> 8) & 0xFF;
 		int blue = rgb & 0xFF;

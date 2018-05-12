@@ -3,8 +3,6 @@ package org.iMage.shutterpile.impl.filters;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 
 import org.iMage.shutterpile.port.IFilter;
 import org.iMage.shutterpile.port.IWatermarkSupplier;
@@ -36,7 +34,7 @@ public final class WatermarkFilter implements IFilter {
 
 	@Override
 	public BufferedImage apply(BufferedImage input) {
-		BufferedImage result = this.deepCopy(input);
+		BufferedImage result = Util.deepCopy(input);
 
 		resizeWatermark(result);
 		putWatermarkOnImg(result);
@@ -101,12 +99,5 @@ public final class WatermarkFilter implements IFilter {
 
 		image.setRGB(x, y, newRgba);
 
-	}
-
-	private BufferedImage deepCopy(BufferedImage bi) {
-		ColorModel cm = bi.getColorModel();
-		boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-		WritableRaster raster = bi.copyData(null);
-		return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
 	}
 }
