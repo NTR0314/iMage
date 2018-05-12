@@ -86,9 +86,19 @@ public class FilterTest {
 		
 		this.result = gsf.apply(wmTichyOg);
 		
-//		for (int i = 0; i < array.length; i++) {
-//			
-//		}
+		for (int i = 0; i < this.preTest.getWidth(); i++) {
+			for (int j = 0; j < this.preTest.getHeight(); j++) {
+				int rbg = this.preTest.getRGB(i, j);
+				int avgShould = ((rbg & 0xFF) + ((rbg >> 8) & 0xFF) + ((rbg >> 16) & 0xFF)) / 3;
+				
+				//red == avg
+				assertEquals(Util.getRed(this.result.getRGB(i, j)), avgShould);
+				//green == avg
+				assertEquals(Util.getGreen(this.result.getRGB(i, j)), avgShould);
+				//blue == avg
+				assertEquals(Util.getBlue(this.result.getRGB(i, j)), avgShould);
+			}
+		}
 		
 	}
 }
