@@ -24,10 +24,14 @@ import org.junit.Test;
  */
 public class FilterTest {
 	private static final String PATH = "src/test/resources/";
+	
 	private static final String BUNT = PATH + "colorfulPicture_alpha.png";
+	private static final String BUNT_MIT_WM = PATH + "colorfulPicWithPearWatermark10Row.png";
 	private static final String PEAR = PATH + "pearWatermark.png";
 	private static final String TICHY_ORIGINAL = PATH + "tichyWatermark_input_no_alpha.png";
+	
 	private BufferedImage picBunt;
+	private BufferedImage picBuntMitWm;
 	private BufferedImage wmPear;
 	private BufferedImage wmTichyOg;
 	
@@ -43,6 +47,7 @@ public class FilterTest {
 		picBunt = ImageIO.read(new File(BUNT));
 		wmPear = ImageIO.read(new File(PEAR));
 		wmTichyOg = ImageIO.read(new File(TICHY_ORIGINAL));
+		picBuntMitWm = ImageIO.read(new File(BUNT_MIT_WM));
 	}
 
 	/**
@@ -65,20 +70,25 @@ public class FilterTest {
 	}
 
 	/**
-	 * Ignored for now, because the test should work but doesn't
+	 * Test WatermarkFilter
 	 */
-	@Ignore
+	@Test
 	public void testWatermarkfilter() {
+		this.preTest = picBunt;
+		
 		WatermarkFilter wmf = new WatermarkFilter(wmPear, 10);
-		this.result = wmf.apply(picBunt);
+		this.result = wmf.apply(preTest);
 		
 		for (int i = 0; i < result.getWidth(); i++) {
 			for (int j = 0; j < result.getHeight(); j++) {
-				assertEquals(result.getRGB(i, j), picBunt.getRGB(i, j));
+				assertEquals(result.getRGB(i, j), picBuntMitWm.getRGB(i, j));
 			}
 		}
 	}
 	
+	/**
+	 * Test GrayscaleFilter
+	 */
 	@Test
 	public void testGrayscaleFilter() {
 		this.preTest = wmTichyOg;
