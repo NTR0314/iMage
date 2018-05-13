@@ -17,6 +17,7 @@ public class ThresholdFilter implements IFilter {
 	@Override
 	public BufferedImage apply(BufferedImage arg0) {
 		BufferedImage image = Util.deepCopy(arg0);
+		image = makeAlpha(image);
 		
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
@@ -62,4 +63,21 @@ public class ThresholdFilter implements IFilter {
 		image.setRGB(x, y, rgb);
 	}
 
+	private BufferedImage makeAlpha(BufferedImage image) {
+		if (image.getColorModel().hasAlpha()) {
+			return image;
+		} else {
+			BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+			for (int i = 0; i < image.getWidth(); i++) {
+				for (int j = 0; j < image.getHeight(); j++) {
+					int rgb = image.getRGB(i, j);
+					int newRgb = (rgb & 0x00FFFFFF) | 0xFF000000;
+					
+					newImage.setRGB(i, j, newRgb);
+				}
+			}
+			return newImage;
+		}
+		
+	}
 }

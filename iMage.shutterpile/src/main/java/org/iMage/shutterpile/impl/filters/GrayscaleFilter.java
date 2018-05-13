@@ -1,5 +1,6 @@
 package org.iMage.shutterpile.impl.filters;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 import org.iMage.shutterpile.port.IFilter;
@@ -15,29 +16,32 @@ public class GrayscaleFilter implements IFilter {
 
 	@Override
 	public BufferedImage apply(BufferedImage arg0) {
-		BufferedImage image = Util.deepCopy(arg0);
+		BufferedImage image = arg0;
+		BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
-				image.setRGB(i, j, calcRGB(i, j, image));
+				int grayrbg = calcRGB(i, j, image);
+
+				result.setRGB(i, j, grayrbg);
 			}
 		}
 
-		return image;
+		return result;
 	}
 
 	private int calcRGB(int x, int y, BufferedImage image) {
 		int rgb = image.getRGB(x, y);
-		int alpha = (rgb >>> 24) & 0xFF;
-		int red = (rgb >> 16) & 0xFF;
-		int green = (rgb >> 8) & 0xFF;
-		int blue = rgb & 0xFF;
+		int alpha = Util.getAlpha(rgb);
+		int red = Util.getRed(rgb);
+		int green = Util.getGreen(rgb);
+		int blue = Util.getBlue(rgb);
 
 		int avg = (red + green + blue) / 3;
 
-		int newrgb = avg + (avg << 8) + (avg << 16) + (alpha << 24);
+		Color c = new Color(avg, avg, avg, alpha);
 
-		return newrgb;
+		return c.getRGB();
 	}
 
 	/**

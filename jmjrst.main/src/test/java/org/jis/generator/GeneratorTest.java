@@ -1,141 +1,240 @@
 package org.jis.generator;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReadParam;
+import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 
-import org.jis.generator.Generator;
-import org.jis.options.Options;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import com.sun.net.httpserver.Authenticator.Result;
-
 /**
- * Testclass for method rotateImage() in org.jis.generator.Generator.java
- * 
- * @author Oswald
- *
+ * Sommersemester 2018 - Übungsblatt 1 - Aufgabe 2
  */
 public class GeneratorTest {
+  /**
+   * Class under test.
+   */
+  private Generator generator;
 
-	private Generator generator;
-	private BufferedImage image;
-	private static final String IMAGEPATH = "src/test/resources/picture.jpg";
+  private int imageHeight, imageWidth;
+  private static final File TEST_DIR = new File("target/dataTest");
+  private static final String IMAGE_FILE = "/picture.jpg";
 
-	/**
-	 * Initialize generator and load picture
-	 * 
-	 * @throws IOException
-	 *             on invalid path
-	 */
-	@Before
-	public void setUp() throws IOException {
-		this.generator = new Generator(null, 0);
-		this.image = ImageIO.read(new File(IMAGEPATH));
-	}
+  /**
+   * Input for test cases
+   */
+  private static BufferedImage testImage;
+  /**
+   * Metadata for saving the image
+   */
+  private IIOMetadata imeta;
+  /**
+   * output from test cases
+   */
+  private BufferedImage rotatedImageTestResult;
 
-	/**
-	 * Reset generator
-	 * @throws IOException possible at ImageIO.write
-	 */
-	@After
-	public void tearDown() throws IOException {
-		// save image
-		String datestring = new SimpleDateFormat("HHmmss_SSS").format(new Date());
-		File outputFile = new File("target/dataTest/rotatedPicture_" + datestring + ".jpg");
-		ImageIO.write(this.image, "jpg", outputFile);
-		// reset
-		this.generator = null;
-		this.image = null;
-	}
+  /**
+   * Aufgabe 2 h) Teil 1: Sicherstellen, dass das Ausgabeverzeichnis existiert und leer ist.
+   */
+  @BeforeClass
+  public static void beforeClass() {
+    if (TEST_DIR.exists()) {
+      for (File f : TEST_DIR.listFiles()) {
+        f.delete();
+      }
+    } else {
+      TEST_DIR.mkdirs();
+    }
+  }
 
-	/**
-	 * Test if rotating by 0 degrees results in the same image
-	 */
-	@Test
-	public void notRotating() {
-		assertEquals(this.image, this.generator.rotateImage(this.image, 0.0));
-		this.image = this.generator.rotateImage(this.image, 0.0);
-	}
+  /**
+   * Aufgabe 2 c)
+   * 
+   */
+  @Before
+  public void setUp() {
+    generator = new Generator(null, 0);
 
-	/**
-	 * Test if method works with null as image
-	 */
-	@Test
-	public void nullImage() {
-		assertNull(this.generator.rotateImage(null, 0.0));
-	}
+    testImage = null;
+    imeta = null;
+    rotatedImageTestResult = null;
 
-	/**
-	 * Trivial illegal arguments test
-	 */
-	@Test(expected = IllegalArgumentException.class)
-	public void argumentTest() {
-		this.generator.rotateImage(this.image, 0.5);
-	}
+    try (ImageInputStream iis = ImageIO
+        .createImageInputStream(this.getClass().getResourceAsStream(IMAGE_FILE));) {
+      ImageReader reader = ImageIO.getImageReadersByFormatName("jpg").next();
+      reader.setInput(iis, true);
+      ImageReadParam params = reader.getDefaultReadParam();
+      testImage = reader.read(0, params);
+      imageHeight = testImage.getHeight();
+      imageWidth = testImage.getWidth();
+      imeta = reader.getImageMetadata(0);
+      reader.dispose();
+    } catch (IOException e) {
+      fail(e.getMessage());
+    }
+  }
 
-	/**
-	 * Test if test image rotated by 360 degrees results is the same image, (it
-	 * should be) testing is done by comparing each pixel asserting they are the
-	 * same
-	 */
-	@Test
-	public void rotateThreeSixty() {
-		BufferedImage rotatedImage;
+  /**
+   * Aufgabe 2 h) Teil 2: Automatisches Speichern von testImage.
+   */
+  @After
+  public void tearDown() {
+    SimpleDateFormat sdf = new SimpleDateFormat("HHmmss_SSS");
+    String time = sdf.format(new Date());
 
-		rotatedImage = this.generator.rotateImage(this.image, Math.toRadians(90.0)); // rotate by 90 degrees
-		rotatedImage = this.generator.rotateImage(rotatedImage, Math.toRadians(270.0)); // rotate by another
-																						// 270 degrees
+    File outputFile = new File(TEST_DIR + "/rotatedPicture_" + time + ".jpg");
 
-		// Test if height and wdith are still the same
-		assertEquals(this.image.getHeight(), rotatedImage.getHeight());
-		assertEquals(this.image.getWidth(), rotatedImage.getWidth());
+    if (rotatedImageTestResult != null) {
+      try (FileOutputStream fos = new FileOutputStream(outputFile);
+          ImageOutputStream ios = ImageIO.createImageOutputStream(fos);) {
+        ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+        writer.setOutput(ios);
 
-		// Test if all pixels are the same color as before
-		for (int i = 0; i < this.image.getWidth(); i++) {
-			for (int j = 0; j < this.image.getHeight(); j++) {
-				assertEquals(this.image.getRGB(i, j), rotatedImage.getRGB(i, j));
-			}
-		}
+        ImageWriteParam iwparam = new JPEGImageWriteParam(Locale.getDefault());
+        iwparam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT); // mode explicit necessary
 
-		this.image = rotatedImage;
-	}
+        // set JPEG Quality
+        iwparam.setCompressionQuality(1f);
+        writer.write(imeta, new IIOImage(rotatedImageTestResult, null, null), iwparam);
+        writer.dispose();
+      } catch (IOException e) {
+        fail();
+      }
+    }
+  }
 
-	/**
-	 * Test if rotating picture by 180degrees results in upside down as expected. We
-	 * test if each pixel is mirrored at x-axis middle
-	 */
-	@Test
-	public void upsideDown() {
-		BufferedImage rotatedImage = this.generator.rotateImage(this.image, Math.toRadians(180.0)); // rotate 180 degree
+  /**
+   * Aufgabe 2 d) Teil 1
+   */
+  @Test
+  public void testRotateImage_RotateImage0() {
+    rotatedImageTestResult = generator.rotateImage(testImage, 0);
 
-		// Making sure height and width of picture are staying the same
-		assertEquals(this.image.getHeight(), rotatedImage.getHeight());
-		assertEquals(this.image.getWidth(), rotatedImage.getWidth());
+    assertTrue(imageEquals(testImage, rotatedImageTestResult));
+  }
 
-		// comparing pixels
-		for (int i = 0; i < this.image.getWidth(); i++) {
-			for (int j = 0; j < this.image.getHeight(); j++) {
-				assertEquals(this.image.getRGB(i, j),
-						rotatedImage.getRGB(this.image.getWidth() - i - 1, this.image.getHeight() - j - 1));
-			}
-		}
-		this.image = rotatedImage;
-	}
-	
-	
+  /**
+   * Aufgabe 2 d) Teil 2
+   */
+  @Test
+  public void testRotateImage_RotateNull0() {
+    rotatedImageTestResult = generator.rotateImage(null, 0);
+
+    assertTrue(null == rotatedImageTestResult);
+  }
+
+  /**
+   * Aufgabe 2 e)
+   */
+  @Test(expected = IllegalArgumentException.class)
+  public void testRotateImage_Rotate1() {
+    generator.rotateImage(testImage, 0.5);
+  }
+
+  /**
+   * Aufgabe 2 f) Teil 1
+   */
+  @Test
+  public void testRotateImage_Rotate90() {
+    rotatedImageTestResult = generator.rotateImage(testImage, Generator.ROTATE_90);
+
+    assertEquals(testImage.getHeight(), rotatedImageTestResult.getWidth());
+    assertEquals(testImage.getWidth(), rotatedImageTestResult.getHeight());
+
+    for (int i = 0; i < imageHeight; i++) {
+      for (int j = 0; j < imageWidth; j++) {
+        assertEquals(testImage.getRGB(j, i), rotatedImageTestResult.getRGB(imageHeight - 1 - i, j));
+      }
+    }
+  }
+
+  /**
+   * Aufgabe 2 f) Teil 2
+   */
+  @Test
+  public void testRotateImage_Rotate270() {
+    rotatedImageTestResult = generator.rotateImage(testImage, Generator.ROTATE_270);
+
+    assertEquals(testImage.getHeight(), rotatedImageTestResult.getWidth());
+    assertEquals(testImage.getWidth(), rotatedImageTestResult.getHeight());
+
+    for (int i = 0; i < imageHeight; i++) {
+      for (int j = 0; j < imageWidth; j++) {
+        assertEquals(testImage.getRGB(j, i), rotatedImageTestResult.getRGB(i, imageWidth - 1 - j));
+      }
+    }
+  }
+
+  /**
+   * Aufgabe 2 g)
+   */
+  @Test
+  public void testRotateImage_Rotate180() {
+    rotatedImageTestResult = generator.rotateImage(testImage, Math.toRadians(180));
+
+    assertEquals(testImage.getHeight(), rotatedImageTestResult.getHeight());
+    assertEquals(testImage.getWidth(), rotatedImageTestResult.getWidth());
+
+    for (int i = 0; i < imageHeight; i++) {
+      for (int j = 0; j < imageWidth; j++) {
+        assertEquals(testImage.getRGB(j, i),
+            rotatedImageTestResult.getRGB(imageWidth - 1 - j, imageHeight - 1 - i));
+      }
+    }
+  }
+
+  /**
+   * Check if two images are identical - pixel wise.
+   * 
+   * @param expected
+   *          the expected image
+   * @param actual
+   *          the actual image
+   * @return true if images are equal, false otherwise.
+   */
+  protected static boolean imageEquals(BufferedImage expected, BufferedImage actual) {
+    if (expected == null || actual == null) {
+      return false;
+    }
+
+    if (expected.getHeight() != actual.getHeight()) {
+      return false;
+    }
+
+    if (expected.getWidth() != actual.getWidth()) {
+      return false;
+    }
+
+    for (int i = 0; i < expected.getHeight(); i++) {
+      for (int j = 0; j < expected.getWidth(); j++) {
+        if (expected.getRGB(j, i) != actual.getRGB(j, i)) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
 }
