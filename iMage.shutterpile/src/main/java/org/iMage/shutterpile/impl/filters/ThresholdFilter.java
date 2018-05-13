@@ -16,7 +16,7 @@ public class ThresholdFilter implements IFilter {
 
 	@Override
 	public BufferedImage apply(BufferedImage arg0) {
-		BufferedImage image = arg0;
+		BufferedImage image = Util.deepCopy(arg0);
 		
 		for (int i = 0; i < image.getWidth(); i++) {
 			for (int j = 0; j < image.getHeight(); j++) {
@@ -58,9 +58,7 @@ public class ThresholdFilter implements IFilter {
 	
 	private void makePixelTransparent(int x, int y, BufferedImage image) {
 		int rgb = image.getRGB(x, y);
-		rgb = rgb & 0xFFFFFF;
-		rgb = rgb + 0xFF000000;
-		
+		rgb = rgb & 0x00FFFFFF;		
 		image.setRGB(x, y, rgb);
 	}
 
