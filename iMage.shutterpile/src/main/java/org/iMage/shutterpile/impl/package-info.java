@@ -1,7 +1,7 @@
 /**
  * This package contains the implementation for the interfaces in {@link org.iMage.shutterpile.port}
  * 
- * Dominic Wolff
+ * @author Dominik Fuchss
  *
  */
 package org.iMage.shutterpile.impl;

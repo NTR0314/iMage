@@ -1,83 +1,54 @@
 package org.iMage.shutterpile.impl.filters;
 
-import java.awt.image.BufferedImage;
-
-import org.iMage.shutterpile.port.IFilter;
-
-
 /**
- * This {@link IFilter Filter} makes a Pixel of the picture transparent if the the average rbg is above a certain value
- * 
- * @author Oswald
+ * Filters all pixels that have a 'grayscale color' above a certain threshold and set them to
+ * transparent. Pixels below the threshold won't be altered.
  *
+ * @author Dominik Fuchss
  */
-public class ThresholdFilter implements IFilter {
-	private int threshold;
+public final class ThresholdFilter extends PixelwiseFilter {
 
-	@Override
-	public BufferedImage apply(BufferedImage arg0) {
-		BufferedImage image = Util.deepCopy(arg0);
-		image = makeAlpha(image);
-		
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
-				if (getAvg(i, j, image) > this.threshold) {
-					makePixelTransparent(i, j, image);
-				}
-			}
-		}
-		
-		return image;
-		
-	}
-	
-	/**
-	 * Constructor with threshold init.
-	 * @param threshold value for threshold
-	 */
-	public ThresholdFilter(int threshold) {
-		this.threshold = threshold;
-	}
-	
-	/**
-	 * Standard Constructor sets threshold value to default Value, 127
-	 */
-	public ThresholdFilter() {
-		this.threshold = 127;
-	}
-	
-	private int getAvg(int x, int y, BufferedImage image) {
-		int rgb = image.getRGB(x, y);
-		int red = (rgb >> 16) & 0xFF;
-		int green = (rgb >> 8) & 0xFF;
-		int blue = rgb & 0xFF;
+  /**
+   * If the value surpasses the upper threshold value, the color is set directly to transparent.
+   */
+  public static final int DEFAULT_THRESHOLD = 127;
 
-		int avg = (red + green + blue) / 3;
+  private final int threshold;
 
-		return avg;
-	}
-	
-	private void makePixelTransparent(int x, int y, BufferedImage image) {
-		int rgb = image.getRGB(x, y);
-		rgb = rgb & 0x00FFFFFF;		
-		image.setRGB(x, y, rgb);
-	}
+  /**
+   * Will invoke {@link #ThresholdFilter(int)} with the default threshold value
+   * {@link #DEFAULT_THRESHOLD}.
+   */
+  public ThresholdFilter() {
+    this.threshold = ThresholdFilter.DEFAULT_THRESHOLD;
+  }
 
-	private BufferedImage makeAlpha(BufferedImage image) {
-		if (image.getColorModel().hasAlpha()) {
-			return image;
-		} else {
-			BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-			for (int i = 0; i < image.getWidth(); i++) {
-				for (int j = 0; j < image.getHeight(); j++) {
-					int rgb = image.getRGB(i, j);
-					int newRgb = (rgb & 0x00FFFFFF) | 0xFF000000;
-					
-					newImage.setRGB(i, j, newRgb);
-				}
-			}
-			return newImage;
-		}
-		
-	}
+  /**
+   * Create a new ThresholdFilter by lower threshold.
+   *
+   * @param threshold
+   *          the lower threshold (see {@link #DEFAULT_THRESHOLD})
+   */
+  public ThresholdFilter(int threshold) {
+    if (threshold < 0 || threshold > 255) {
+      throw new IllegalArgumentException("Out of bounds [0,255]");
+    }
+    this.threshold = threshold;
+  }
+
+  @Override
+  protected int getPixelColor(int color) {
+    // Same procedure as in GrayScaleFilter ..
+    int red = color >> 16 & 0x000000FF;
+    int green = color >> 8 & 0x000000FF;
+    int blue = color & 0x000000FF;
+    int u = (red + green + blue) / 3;
+
+    if ((u & 0xFF) > this.threshold) {
+      // Set to transparent, if gray value is greater than threshold
+      return 0x00000000;
+    }
+    return color;
+  }
+
 }

@@ -1,103 +1,135 @@
 package org.iMage.shutterpile.impl.filters;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
+import java.util.Objects;
 
+import org.iMage.shutterpile.impl.util.ImageUtils;
 import org.iMage.shutterpile.port.IFilter;
 import org.iMage.shutterpile.port.IWatermarkSupplier;
 
 /**
- * This {@link IFilter Filter} adds a watermark ({@link BufferedImage}) to an
- * image.
+ * This {@link IFilter Filter} adds a watermark ({@link BufferedImage}) to an image.
  *
- * @author Dominic Wolff
+ * @author Dominik Fuchss
  *
  */
 public final class WatermarkFilter implements IFilter {
-	private BufferedImage watermark;
-	private int watermarksPerRow;
+  private final BufferedImage watermark;
+  private int watermarksPerRow;
 
-	/**
-	 * Create a the WatermarkFilter.
-	 *
-	 * @param watermark
-	 *            the watermark image as provided by a {@link IWatermarkSupplier}.
-	 * @param watermarksPerRow
-	 *            the number of watermarks in a line (this is meant as desired
-	 *            value. the possible surplus is drawn)
-	 */
-	public WatermarkFilter(BufferedImage watermark, int watermarksPerRow) {
-		this.watermark = watermark;
-		this.watermarksPerRow = watermarksPerRow;
-	}
+  /**
+   * Create a the WatermarkFilter.
+   *
+   * @param watermark
+   *          the watermark image as provided by a {@link IWatermarkSupplier}.
+   * @param watermarksPerRow
+   *          the number of watermarks in a line (this is meant as desired value. the possible
+   *          surplus is drawn)
+   */
+  public WatermarkFilter(BufferedImage watermark, int watermarksPerRow) {
+    Objects.requireNonNull(watermark);
+    this.watermark = watermark;
+    this.setWatermarksPerRow(watermarksPerRow);
+  }
 
-	@Override
-	public BufferedImage apply(BufferedImage input) {
-		BufferedImage result = Util.deepCopy(input);
+  @Override
+  public BufferedImage apply(BufferedImage input) {
+    int imgWidth = input.getWidth();
+    int imgHeight = input.getHeight();
 
-		resizeWatermark(result);
-		putWatermarkOnImg(result);
+    int watermarkWidth = imgWidth / this.watermarksPerRow;
+    int watermarkHeight;
+    if (watermarkWidth <= 0) {
+      throw new IllegalArgumentException("watermark width would be too small");
+    }
+    BufferedImage watermark = ImageUtils.createARGBImage(this.watermark);
+    watermark = ImageUtils.scaleWidth(watermark, watermarkWidth);
+    watermarkHeight = watermark.getHeight();
 
-		return result;
+    BufferedImage result = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB);
+    for (int w = 0; w < imgWidth; w += watermarkWidth) {
+      for (int h = 0; h < imgHeight; h += watermarkHeight) {
+        this.mergeImages(input, watermark, w, h, result);
+      }
+    }
+    result.flush();
+    return result;
+  }
 
-	}
+  /**
+   * Set the number of watermarks in a line (this is meant as desired value. the possible surplus is
+   * drawn)
+   *
+   * @param watermarksPerRow
+   *          the target value of watermarks in a line (shall be &gt; 0)
+   */
+  public void setWatermarksPerRow(int watermarksPerRow) {
+    if (watermarksPerRow < 1) {
+      throw new IllegalArgumentException("watermarksPerRow must be >= 1");
+    }
+    this.watermarksPerRow = watermarksPerRow;
+  }
 
-	private void resizeWatermark(BufferedImage bimage) {
-		int newWidth = bimage.getWidth() / this.watermarksPerRow;
+  /**
+   * Draw a small image to a bigger image using alpha compositing.
+   *
+   * @param source
+   *          the source image (large image)
+   * @param toDraw
+   *          the image to be drawn on top of <em>source</em>
+   * @param x
+   *          the start index (horizontal) in <em>source</em>
+   * @param y
+   *          the start index (vertical) in <em>source</em>
+   * @param target
+   *          a target image (same size as <em>source</em>) to draw the new image
+   */
+  private void mergeImages(BufferedImage source, BufferedImage toDraw, int x, int y,
+      BufferedImage target) {
+    int sW = source.getWidth();
+    int sH = source.getHeight();
+    int dW = toDraw.getWidth();
+    int dH = toDraw.getHeight();
 
-		Image image = this.watermark.getScaledInstance(newWidth, -1, Image.SCALE_SMOOTH);
+    for (int w = 0; w < dW && w + x < sW; w++) {
+      for (int h = 0; h < dH && h + y < sH; h++) {
+        target.setRGB(x + w, y + h, this.merge(toDraw.getRGB(w, h), source.getRGB(x + w, y + h)));
+      }
+    }
+  }
 
-		this.watermark = toBufferedImage(image);
-	}
+  /**
+   * Calculate color after draw A over B (see:
+   * <a href="https://de.wikipedia.org/wiki/Alpha_Blending">Alpha Blending</a>).
+   *
+   * @param inputA
+   *          the color (ARGB) which shall drawn over <em>B</em>
+   * @param inputB
+   *          the color (ARGB) that is painted over <em>A</em>
+   * @return the result color (ARGB)
+   */
+  private int merge(int inputA, int inputB) {
+    int aA = (inputA >> 24 & 0x000000FF);
+    int rA = (inputA >> 16 & 0x000000FF);
+    int gA = (inputA >> 8 & 0x000000FF);
+    int bA = (inputA & 0x000000FF);
 
-	private BufferedImage toBufferedImage(Image img) {
-		if (img instanceof BufferedImage) {
-			return (BufferedImage) img;
-		}
+    int aB = (inputB >> 24 & 0x000000FF);
+    int rB = (inputB >> 16 & 0x000000FF);
+    int gB = (inputB >> 8 & 0x000000FF);
+    int bB = (inputB & 0x000000FF);
 
-		// Create a buffered image with transparency
-		BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+    int a = (255 * aA + (255 - aA) * aB) / 255;
+    // If fully transparent do nothing
+    if (a == 0) {
+      return 0x00000000;
+    }
 
-		// Draw the image on to the buffered image
-		Graphics2D bGr = bimage.createGraphics();
-		bGr.drawImage(img, 0, 0, null);
-		bGr.dispose();
+    int r = (255 * aA * rA + (255 - aA) * aB * rB) / (255 * a);
+    int g = (255 * aA * gA + (255 - aA) * aB * gB) / (255 * a);
+    int b = (255 * aA * bA + (255 - aA) * aB * bB) / (255 * a);
 
-		// Return the buffered image
-		return bimage;
+    return a << 24 | r << 16 | g << 8 | b;
+  }
 
-	}
-
-	private void putWatermarkOnImg(BufferedImage image) {
-		for (int i = 0; i < image.getWidth(); i++) {
-			for (int j = 0; j < image.getHeight(); j++) {
-				alphaBlend(i, j, this.watermark, image);
-			}
-		}
-	}
-
-	private void alphaBlend(int x, int y, BufferedImage watermark, BufferedImage image) {
-		int rgba1 = watermark.getRGB(x % watermark.getWidth(), y % watermark.getHeight());
-		int rgba2 = image.getRGB(x, y);
-
-		int alpha1 = (rgba1 >>> 24) & 0xFF;
-		int red1 = (rgba1 >>> 16) & 0xFF;
-		int green1 = (rgba1 >>> 8) & 0xFF;
-		int blue1 = rgba1 & 0xFF;
-
-		int alpha2 = (rgba2 >>> 24) & 0xFF;
-		int red2 = (rgba2 >>> 16) & 0xFF;
-		int green2 = (rgba2 >>> 8) & 0xFF;
-		int blue2 = rgba2 & 0xFF;
-
-		int newAlpha = alpha1 + (((255 - alpha1) * alpha2) / 255);
-		int newRed = (alpha1 * red1 + ((255 - alpha1) * alpha2 * red2) / 255) / newAlpha;
-		int newGreen = (alpha1 * green1 + ((255 - alpha1) * alpha2 * green2) / 255) / newAlpha;
-		int newBlue = (alpha1 * blue1 + ((255 - alpha1) * alpha2 * blue2) / 255) / newAlpha;
-		int newRgba = newBlue | (newGreen << 8) | (newRed << 16) | (newAlpha << 24);
-
-		image.setRGB(x, y, newRgba);
-
-	}
 }
