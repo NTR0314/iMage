@@ -40,6 +40,20 @@ public abstract class JmjrstPlugin implements Comparable<JmjrstPlugin> {
    * Open a configuration dialogue.
    */
   public abstract void configure();
+  
+  /**
+   * Comparing the names of Plugins using the compare() method provided by String class
+   * @param plugin the plugin to compare names with
+   * @return 	0,	if same name
+   * 			-1, if pluginname is lexicographicly less than argument pluginname
+   * 			1, if pluginname is lexicographicly greater than argument pluginname
+   */
+  public int compareTo(JmjrstPlugin plugin) {
+	  String name1 = this.getName();
+	  String name2 = plugin.getName();
+	  
+	   return name1.compareTo(name2);
+  }
 
 
 }
