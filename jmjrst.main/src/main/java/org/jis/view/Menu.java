@@ -49,6 +49,7 @@ public class Menu extends JMenuBar {
   public JMenuItem          look_motif;
   public JMenuItem          look_gtk;
   public JMenuItem          update_check;
+  public JMenuItem			add_plugins;
 
   /**
    * @param m
@@ -88,6 +89,8 @@ public class Menu extends JMenuBar {
     info = new JMenuItem(m.mes.getString("Menu.7"));
     url = ClassLoader.getSystemResource("icons/help-browser.png");
     info.setIcon(new ImageIcon(url));
+    
+    add_plugins = new JMenuItem("Add Plug-In");
 
     update_check = new JMenuItem(m.mes.getString("Menu.15"));
     url = ClassLoader.getSystemResource("icons/system-software-update.png");
@@ -114,6 +117,7 @@ public class Menu extends JMenuBar {
     option.addSeparator();
     option.add(update_check);
     about.add(info);
+    plugins.add(add_plugins);
     this.add(datei);
     this.add(option);
     this.add(plugins);
