@@ -15,6 +15,8 @@
  */
 package org.jis.view;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
@@ -23,6 +25,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.UIManager;
 
+import java.util.List;
+
+import org.iMage.plugins.JmjrstPlugin;
+import org.iMage.plugins.PluginManager;
 import org.jis.Main;
 import org.jis.listner.MenuListner;
 
@@ -91,6 +97,7 @@ public class Menu extends JMenuBar {
     info.setIcon(new ImageIcon(url));
     
     add_plugins = new JMenuItem("Add Plug-In");
+    makeMenuAddPlugins(m);
 
     update_check = new JMenuItem(m.mes.getString("Menu.15"));
     url = ClassLoader.getSystemResource("icons/system-software-update.png");
@@ -154,6 +161,46 @@ public class Menu extends JMenuBar {
       if (uii[i].toString().substring(uii[i].toString().lastIndexOf(" ") + 1, uii[i].toString().lastIndexOf("]")) //$NON-NLS-1$ //$NON-NLS-2$
           .equalsIgnoreCase("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel")) optionen_look.add(look_nimbus); //$NON-NLS-1$
     }
+  }
+  
+  private void makeMenuAddPlugins(Main main) {
+	  Iterable<JmjrstPlugin> pluginList = PluginManager.getPlugins();
+	  
+	  for (JmjrstPlugin plugin: pluginList) {
+		  plugin.init(main);
+		  
+		  add_plugins.add(createJMenuItem(plugin));
+		  
+		  if (plugin.isConfigurable()) {
+			  add_plugins.add(createConfigMenuItem(plugin));		  
+		  }
+	  }
+  }
+  
+  private JMenuItem createJMenuItem(JmjrstPlugin plugin) {
+	  JMenuItem menuItem = new JMenuItem(plugin.getName());
+	  
+	  menuItem.addActionListener(new ActionListener() {
+		  @Override
+		  public void actionPerformed(ActionEvent e) {
+			  plugin.run();
+		  }
+	  });
+	  
+	  return menuItem;
+  }
+  
+  private JMenuItem createConfigMenuItem(JmjrstPlugin plugin) {
+  JMenuItem menuItem = new JMenuItem("Configure " + plugin.getName());
+	  
+	  menuItem.addActionListener(new ActionListener() {
+		  @Override
+		  public void actionPerformed(ActionEvent e) {
+			  plugin.configure();
+		  }
+	  });
+	  
+	  return menuItem;
   }
 
 }
