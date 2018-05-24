@@ -55,7 +55,6 @@ public class Menu extends JMenuBar {
   public JMenuItem          look_motif;
   public JMenuItem          look_gtk;
   public JMenuItem          update_check;
-  public JMenuItem			add_plugins;
 
   /**
    * @param m
@@ -66,7 +65,7 @@ public class Menu extends JMenuBar {
     JMenu datei = new JMenu(m.mes.getString("Menu.0"));
     JMenu option = new JMenu(m.mes.getString("Menu.1"));
     JMenu optionen_look = new JMenu(m.mes.getString("Menu.2"));
-    JMenu plugins = new JMenu("Plug-Ins");
+    JMenu plugins = makeMenuAddPlugins(m);
     JMenu about = new JMenu(m.mes.getString("Menu.3"));
 
     gener = new JMenuItem(m.mes.getString("Menu.4"));
@@ -94,10 +93,7 @@ public class Menu extends JMenuBar {
 
     info = new JMenuItem(m.mes.getString("Menu.7"));
     url = ClassLoader.getSystemResource("icons/help-browser.png");
-    info.setIcon(new ImageIcon(url));
-    
-    add_plugins = new JMenuItem("Add Plug-In");
-    makeMenuAddPlugins(m);
+    info.setIcon(new ImageIcon(url));    
 
     update_check = new JMenuItem(m.mes.getString("Menu.15"));
     url = ClassLoader.getSystemResource("icons/system-software-update.png");
@@ -124,7 +120,6 @@ public class Menu extends JMenuBar {
     option.addSeparator();
     option.add(update_check);
     about.add(info);
-    plugins.add(add_plugins);
     this.add(datei);
     this.add(option);
     this.add(plugins);
@@ -163,10 +158,16 @@ public class Menu extends JMenuBar {
     }
   }
   
-  private void makeMenuAddPlugins(Main main) {
+  private JMenu makeMenuAddPlugins(Main main) {
+	  JMenu plugins = new JMenu("Plug-Ins");
+	  JMenu add_plugins = new JMenu("Add Plug-In");
+	  plugins.add(add_plugins);
+	  
 	  Iterable<JmjrstPlugin> pluginList = PluginManager.getPlugins();
+	  int pluginCount = 0;
 	  
 	  for (JmjrstPlugin plugin: pluginList) {
+		  pluginCount++;
 		  plugin.init(main);
 		  
 		  add_plugins.add(createJMenuItem(plugin));
@@ -175,6 +176,12 @@ public class Menu extends JMenuBar {
 			  add_plugins.add(createConfigMenuItem(plugin));		  
 		  }
 	  }
+	  
+	  if (pluginCount == 0) {
+		  add_plugins.add(new JMenuItem("Nothing to load here"));
+	  }
+	  
+	  return plugins;
   }
   
   private JMenuItem createJMenuItem(JmjrstPlugin plugin) {
