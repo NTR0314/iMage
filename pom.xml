@@ -22,5 +22,6 @@
 		<module>jmjrst.main</module>
 		<module>iMage.shutterpile</module>
 		<module>iMage.shutterpile-cli</module>
+		<module>iMage.facine-plugin</module>
 	</modules>
 </project>
