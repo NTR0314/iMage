@@ -10,6 +10,9 @@ import javax.swing.JLabel;
 
 import org.iMage.plugins.*;
 import org.jis.Main;
+import org.kohsuke.MetaInfServices;
+
+@MetaInfServices
 
 public class HelloWorldPlugin extends JmjrstPlugin {
 	private JFrame frame;
