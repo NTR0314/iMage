@@ -11,16 +11,23 @@
 		<fileSet>
 			<includes>
 				<include>pom.xml</include>
-				<include>.gitignore</include>
-				<include>src/assembly/src.xml</include>
-				<include>src/test/ressources/checkstyle_swt1.xml</include>
-				<include>*.launch</include>
 			</includes>
 		</fileSet>
 
 		<fileSet>
 			<directory>src</directory>
 		</fileSet>
+
+		<fileSet>
+			<useDefaultExcludes>false</useDefaultExcludes>
+			<includes>
+				<include>pom.xml</include>
+				<include>.gitignore</include>
+				<include>*.launch</include>
+				<include>LICENSE</include>
+			</includes>
+		</fileSet>
+
 
 		<fileSet>
 			<directory>target</directory>
@@ -31,4 +38,9 @@
 			<outputDirectory>docs</outputDirectory>
 		</fileSet>
 	</fileSets>
+	<!-- including the workspace .gitignore: <files>
+		<file>
+			<source>../../.gitignore</source>
+		</file>
+	</files> -->
 </assembly>

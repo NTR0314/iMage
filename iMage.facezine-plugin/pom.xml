@@ -7,18 +7,21 @@
 		<artifactId>iMage</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>swt1.ub3.a2</groupId>
 	<artifactId>iMage.facezine-plugin</artifactId>
 	<dependencies>
 		<dependency>
-			<groupId>edu.kit.ipd.swt1</groupId>
-			<artifactId>jmjrst-plugin-helper</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<groupId>swt1</groupId>
+			<artifactId>jmjrst.main</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.kohsuke.metainf-services</groupId>
 			<artifactId>metainf-services</artifactId>
-			<optional>false</optional>
+			<optional>true</optional>
 		</dependency>
 	</dependencies>
 </project>

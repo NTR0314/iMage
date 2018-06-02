@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
@@ -7,8 +6,8 @@
 		<artifactId>iMage</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
-	<groupId>swt1.ub3.a1</groupId>
-	<artifactId>2053536</artifactId>
+	<artifactId>jmjrst.main</artifactId>
+
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -16,9 +15,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<artifactId>mockito-all</artifactId>
 		</dependency>
 	</dependencies>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -27,10 +27,14 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.jis.Main</mainClass>
 							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+							<mainClass>org.jis.Main</mainClass>
+							<addDefaultImplementationEntries>
+								true
+							</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>
+								true
+							</addDefaultSpecificationEntries>
 						</manifest>
 					</archive>
 				</configuration>

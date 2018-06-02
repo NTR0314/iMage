@@ -3,7 +3,7 @@ package org.iMage.plugins;
 /**
  * Abstract parent class for plug-ins for JMJRST
  *
- * @author Dominic Wolff
+ * @author Dominik Fuchss
  *
  */
 public abstract class JmjrstPlugin implements Comparable<JmjrstPlugin> {
@@ -40,20 +40,28 @@ public abstract class JmjrstPlugin implements Comparable<JmjrstPlugin> {
    * Open a configuration dialogue.
    */
   public abstract void configure();
-  
-  /**
-   * Comparing the names of Plugins using the compare() method provided by String class
-   * @param plugin the plugin to compare names with
-   * @return 	0,	if same name
-   * 			-1, if pluginname is lexicographicly less than argument pluginname
-   * 			1, if pluginname is lexicographicly greater than argument pluginname
-   */
-  public int compareTo(JmjrstPlugin plugin) {
-	  String name1 = this.getName();
-	  String name2 = plugin.getName();
-	  
-	   return name1.compareTo(name2);
+
+  @Override
+  public int compareTo(JmjrstPlugin otherPlugin) {
+    return this.getClass().getSimpleName().compareTo(otherPlugin.getClass().getSimpleName());
   }
 
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + ((this.getName() == null) ? 0 : this.getName().hashCode());
+    return result;
+  }
 
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) {
+      return true;
+    }
+    if (obj == null || this.getClass() != obj.getClass()) {
+      return false;
+    }
+    return this.compareTo((JmjrstPlugin) obj) == 0;
+  }
 }
