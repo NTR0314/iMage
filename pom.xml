@@ -24,5 +24,6 @@
 		<module>iMage.shutterpile-cli</module>
 		<module>iMage.facezine-plugin</module>
 		<module>iMage.bundle</module>
+		<module>iMage.iDeal</module>
 	</modules>
 </project>
