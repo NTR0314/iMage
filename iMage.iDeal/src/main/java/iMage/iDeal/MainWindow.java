@@ -11,7 +11,7 @@ public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 4424146395462393900L;
 	
 	private void setUpWindow() {
-		//TODO IMPLEMENT
+		this.setVisible(true);
 	}
 	
 
