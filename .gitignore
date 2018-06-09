@@ -34,3 +34,7 @@ target/
 Thumbs.db
 /.recommenders/
 /target/
+
+#IntelliJ
+*.iml
+.idea/
