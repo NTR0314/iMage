@@ -21,14 +21,17 @@ public class MainWindow extends JFrame {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setContentAreaFilled(false);
         button.setVisible(true);
+        button.setToolTipText("Input Picture");
 
         JLabel text = new JLabel("Original");
+
+        JFileChooser fc = new JFileChooser();
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(text);
         panel.add(button);
-        panel.add(Box.createRigidArea(new Dimension(0,26)));
+        panel.add(Box.createRigidArea(new Dimension(0, 26)));
 
         return panel;
     }
@@ -39,10 +42,12 @@ public class MainWindow extends JFrame {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setContentAreaFilled(false);
         button.setVisible(true);
+        button.setToolTipText("The Watermark");
 
         JLabel text = new JLabel("Watermark");
 
         JButton init = new JButton("Init");
+        init.setToolTipText("Calculate watermark");
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -60,6 +65,7 @@ public class MainWindow extends JFrame {
         button.setBorder(BorderFactory.createEmptyBorder());
         button.setContentAreaFilled(false);
         button.setVisible(true);
+        button.setToolTipText("The result/output picture");
 
         JLabel text = new JLabel("Output");
 
@@ -67,7 +73,7 @@ public class MainWindow extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(text);
         panel.add(button);
-        panel.add(Box.createRigidArea(new Dimension(0,26)));
+        panel.add(Box.createRigidArea(new Dimension(0, 26)));
 
 
         return panel;
@@ -98,16 +104,19 @@ public class MainWindow extends JFrame {
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         try {
             topPanel.add(createInputPanel());
-            topPanel.add(Box.createRigidArea(new Dimension(5,0)));
+            topPanel.add(Box.createRigidArea(new Dimension(5, 0)));
             topPanel.add(createWatermarkPanel());
-            topPanel.add(Box.createRigidArea(new Dimension(5,0)));
+            topPanel.add(Box.createRigidArea(new Dimension(5, 0)));
             topPanel.add(createOutputPanel());
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        main.add(Box.createRigidArea(new Dimension(1,75)));
         main.add(topPanel);
         main.add(setUpWMField());
+        main.add(setUpSlider());
+        main.add(setUpLastRow());
 
         this.setVisible(true);
 
@@ -123,7 +132,7 @@ public class MainWindow extends JFrame {
         formatter.setCommitsOnValidEdit(true);
         JFormattedTextField field = new JFormattedTextField(formatter);
 
-        field.setMaximumSize(new Dimension(40,25));
+        field.setMaximumSize(new Dimension(40, 25));
 
         JLabel text = new JLabel("WM per Row");
 
@@ -131,13 +140,50 @@ public class MainWindow extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 
         panel.add(text);
-        panel.add(Box.createRigidArea(new Dimension(5,0)));
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
         panel.add(field);
         panel.setVisible(true);
 
         return panel;
     }
 
+    private JPanel setUpSlider() {
+        JPanel panel = new JPanel();
+
+        JLabel text = new JLabel("Treshold(TODO)");
+
+        JSlider slider = new JSlider(0, 255);
+        slider.setPaintLabels(true);
+        slider.setMajorTickSpacing(255);
+
+        panel.add(text);
+        panel.add(slider);
+        panel.setMaximumSize(new Dimension(500, 200));
+
+
+        return panel;
+    }
+
+    private JPanel setUpLastRow() {
+        JPanel panel = new JPanel();
+
+        JCheckBox checkBox = new JCheckBox("Grayscale");
+        checkBox.setHorizontalTextPosition(SwingConstants.LEFT);
+
+        JButton run = new JButton("Run");
+        run.setToolTipText("Start calculating watermarked image");
+        JButton save = new JButton("Save");
+        save.setToolTipText("Save output image to desired location");
+
+        panel.add(checkBox);
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
+        panel.add(run);
+        panel.add(Box.createRigidArea(new Dimension(5, 0)));
+        panel.add(save);
+
+
+        return panel;
+    }
 
 
 }
