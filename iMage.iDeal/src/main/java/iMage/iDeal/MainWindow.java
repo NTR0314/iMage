@@ -13,24 +13,62 @@ import java.io.IOException;
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 4424146395462393900L;
 
-    private JButton createInputJButton() throws IOException {
-        BufferedImage inputImage = Utils.getImage("Input", 200, 150);
-        JButton inputButton = new JButton(new ImageIcon(inputImage));
-        inputButton.setBorder(BorderFactory.createEmptyBorder());
-        inputButton.setContentAreaFilled(false);
-        inputButton.setVisible(true);
+    private JPanel createInputPanel() throws IOException {
+        BufferedImage image = Utils.getImage("Input", 200, 150);
+        JButton button = new JButton(new ImageIcon(image));
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setVisible(true);
 
-        return inputButton;
+        JLabel text = new JLabel("Original");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(text);
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(0,26)));
+
+        return panel;
     }
 
-    private JButton createWatermarkJButton() throws IOException {
-        BufferedImage watermarkImage = Utils.getImage("Watermark", 200, 150);
-        JButton watermarkButton = new JButton(new ImageIcon(watermarkImage));
-        watermarkButton.setBorder(BorderFactory.createEmptyBorder());
-        watermarkButton.setContentAreaFilled(false);
-        watermarkButton.setVisible(true);
+    private JPanel createWatermarkPanel() throws IOException {
+        BufferedImage image = Utils.getImage("Watermark", 200, 150);
+        JButton button = new JButton(new ImageIcon(image));
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setVisible(true);
 
-        return watermarkButton;
+        JLabel text = new JLabel("Watermark");
+
+        JButton init = new JButton("Init");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(text);
+        panel.add(button);
+        panel.add(new JPanel().add(init));
+
+
+        return panel;
+    }
+
+    private JPanel createOutputPanel() throws IOException {
+        BufferedImage image = Utils.getImage("Output", 200, 150);
+        JButton button = new JButton(new ImageIcon(image));
+        button.setBorder(BorderFactory.createEmptyBorder());
+        button.setContentAreaFilled(false);
+        button.setVisible(true);
+
+        JLabel text = new JLabel("Output");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.add(text);
+        panel.add(button);
+        panel.add(Box.createRigidArea(new Dimension(0,26)));
+
+
+        return panel;
     }
 
     /**
@@ -44,16 +82,19 @@ public class MainWindow extends JFrame {
     }
 
     private void setUp() {
-        this.setSize(700, 500);
-        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        this.setResizable(false);
-        this.setTitle("iDeal");
-        this.setLayout(new BorderLayout());
+        setSize(700, 500);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
+        setTitle("iDeal");
+        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         try {
-            topPanel.add(createInputJButton());
-            topPanel.add(createWatermarkJButton());
+            topPanel.add(createInputPanel());
+            topPanel.add(Box.createRigidArea(new Dimension(5,0)));
+            topPanel.add(createWatermarkPanel());
+            topPanel.add(Box.createRigidArea(new Dimension(5,0)));
+            topPanel.add(createOutputPanel());
         } catch (IOException e) {
             e.printStackTrace();
         }
