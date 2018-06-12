@@ -39,6 +39,8 @@ public class Utils {
 
     @SuppressWarnings("Duplicates")
     private static BufferedImage scaleWidth(BufferedImage input, int width) {
+
+
         if (width <= 0) {
             throw new IllegalArgumentException("width cannot be <= 0");
         }
@@ -56,6 +58,7 @@ public class Utils {
     }
 
     private static BufferedImage scaleHeight(BufferedImage input, int height) {
+
         if (height <= 0) {
             throw new IllegalArgumentException("height must be bigger than 0");
         }
@@ -77,6 +80,6 @@ public class Utils {
         int multX = imageX * goalX;
         int multY = imageY * goalY;
 
-        return multX > multY;
+        return multX < multY;
     }
 }
