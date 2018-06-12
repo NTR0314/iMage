@@ -5,6 +5,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Utility class for GUI
@@ -19,10 +21,11 @@ public class Utils {
      * @return loaded picture
      */
     public static BufferedImage getImage(String imageName, int width, int height) throws IOException {
-        String mainPath = "src/resources/";
-        String path = mainPath + imageName + ".png";
+        String path = "/" + imageName + ".png";
 
-        BufferedImage image = ImageIO.read(new File(path));
+        Class<?> clazz = Utils.class;
+
+        BufferedImage image = ImageIO.read(clazz.getResourceAsStream(path));
         if (scaleByWidth(image.getWidth(), image.getHeight(), width, height)) {
             image = scaleWidth(image, width);
         } else {
