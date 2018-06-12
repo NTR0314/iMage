@@ -1,5 +1,8 @@
 package iMage.iDeal;
 
+import org.iMage.shutterpile.impl.filters.WatermarkFilter;
+import org.iMage.shutterpile.impl.supplier.ImageWatermarkSupplier;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -9,6 +12,8 @@ import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -26,6 +31,7 @@ public class MainWindow extends JFrame {
     private FileNameExtensionFilter pictureFile = new FileNameExtensionFilter("pictures", "jpg", "jpeg", "png");
     private int threshold = 127;
     private JLabel thresholdLabel = new JLabel("Threshold (127)");
+    private boolean grayscaleWatermark = false;
 
     private JPanel createInputPanel() throws IOException {
         BufferedImage image = Utils.getImage("Input", 200, 150);
@@ -104,6 +110,14 @@ public class MainWindow extends JFrame {
 
         JButton init = new JButton("Init");
         init.setToolTipText("Calculate watermark");
+        init.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ImageWatermarkSupplier iwms = new ImageWatermarkSupplier(watermark, grayscaleWatermark);
+
+                watermark = iwms.getWatermark();
+            }
+        });
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -229,6 +243,13 @@ public class MainWindow extends JFrame {
 
         JCheckBox checkBox = new JCheckBox("Grayscale");
         checkBox.setHorizontalTextPosition(SwingConstants.LEFT);
+        checkBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                JCheckBox src = (JCheckBox) e.getSource();
+                grayscaleWatermark = src.isSelected();
+            }
+        });
 
         JButton run = new JButton("Run");
         run.setToolTipText("Start calculating watermarked image");

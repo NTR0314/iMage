@@ -24,7 +24,7 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
   public static final int DEFAULT_FACTOR = 50;
 
   private final IFilter gsf = new GrayscaleFilter();
-  private final IFilter thf;
+  private final IFilter thf = new ThresholdFilter();
 
   private final BufferedImage watermarkInput;
   private final boolean useGrayscaleFilter;
@@ -41,7 +41,6 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
   public ImageWatermarkSupplier(BufferedImage watermarkInput) {
     this(watermarkInput, true);
   }
-  
 
   /**
    * Create the {@link IWatermarkSupplier} by base image of watermark.
@@ -54,27 +53,7 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
   public ImageWatermarkSupplier(BufferedImage watermarkInput, boolean useGrayscaleFilter) {
     this.watermarkInput = watermarkInput;
     this.useGrayscaleFilter = useGrayscaleFilter;
-    thf = new ThresholdFilter();
-    
   }
- /** 
-  * Creater the {@link IWatermarkSupplier} by base imge of watermark.
-  * 
-  * @param watermarkInput
-  * 		the base image to create the watermark
-  * @param useGrayscaleFilter
-  * 		indicates whether a {@link GrayscaleFilter} shall be applied upton the input image
-  * @param threshold
-  * 		the threshold the {@link GrayscaleFilter} should use if it is used
-  */  
-  public ImageWatermarkSupplier(BufferedImage watermarkInput, boolean useGrayscaleFilter, int threshold) {
-	  this.watermarkInput = watermarkInput;
-	  this.useGrayscaleFilter = useGrayscaleFilter;
-	  thf = new ThresholdFilter(threshold);	  
-	  
-  }
-
-  
 
   @Override
   public BufferedImage getWatermark() {
