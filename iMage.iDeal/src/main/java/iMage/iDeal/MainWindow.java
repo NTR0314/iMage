@@ -1,8 +1,12 @@
 package iMage.iDeal;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -12,8 +16,12 @@ import java.text.NumberFormat;
  *
  * @author Oswald
  */
+@SuppressWarnings("Duplicates")
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 4424146395462393900L;
+    private BufferedImage input;
+    private BufferedImage watermark;
+    private FileNameExtensionFilter pictureFile = new FileNameExtensionFilter("pictures", "jpg", "jpeg", "png");
 
     private JPanel createInputPanel() throws IOException {
         BufferedImage image = Utils.getImage("Input", 200, 150);
@@ -22,10 +30,31 @@ public class MainWindow extends JFrame {
         button.setContentAreaFilled(false);
         button.setVisible(true);
         button.setToolTipText("Input Picture");
+        //noinspection Duplicates
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser();
+                fc.setFileFilter(pictureFile);
+                int returnValue = fc.showOpenDialog(null);
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        BufferedImage image = ImageIO.read(fc.getSelectedFile());
+                        input = Utils.resizeImage(image, 200, 150);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                if (input != null) {
+                    button.setIcon(new ImageIcon(input));
+                }
+
+            }
+        });
 
         JLabel text = new JLabel("Original");
-
-        JFileChooser fc = new JFileChooser();
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -43,6 +72,29 @@ public class MainWindow extends JFrame {
         button.setContentAreaFilled(false);
         button.setVisible(true);
         button.setToolTipText("The Watermark");
+
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fc = new JFileChooser();
+                fc.setFileFilter(pictureFile);
+                int returnValue = fc.showOpenDialog(null);
+
+                if (returnValue == JFileChooser.APPROVE_OPTION) {
+                    try {
+                        BufferedImage image = ImageIO.read(fc.getSelectedFile());
+                        watermark = Utils.resizeImage(image, 200, 150);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                    }
+                }
+
+                if (watermark != null) {
+                    button.setIcon(new ImageIcon(watermark));
+                }
+
+            }
+        });
 
         JLabel text = new JLabel("Watermark");
 
@@ -112,7 +164,7 @@ public class MainWindow extends JFrame {
             e.printStackTrace();
         }
 
-        main.add(Box.createRigidArea(new Dimension(1,75)));
+        main.add(Box.createRigidArea(new Dimension(1, 75)));
         main.add(topPanel);
         main.add(setUpWMField());
         main.add(setUpSlider());
