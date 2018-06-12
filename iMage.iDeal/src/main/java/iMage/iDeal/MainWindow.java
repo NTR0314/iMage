@@ -12,9 +12,6 @@ import java.io.IOException;
  */
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 4424146395462393900L;
-    private static final String INPUT_PATH = "src/resources/Input.png";
-    private static final String OUTPUT_PATH = "src/resources/Output.png";
-    private static final String WATERMARK_PATH = "src/resources/Watermark.png";
 
     private JButton createInputJButton() throws IOException {
         BufferedImage inputImage = Utils.getImage("Input", 200, 150);
@@ -24,6 +21,16 @@ public class MainWindow extends JFrame {
         inputButton.setVisible(true);
 
         return inputButton;
+    }
+
+    private JButton createWatermarkJButton() throws IOException {
+        BufferedImage watermarkImage = Utils.getImage("Watermark", 200, 150);
+        JButton watermarkButton = new JButton(new ImageIcon(watermarkImage));
+        watermarkButton.setBorder(BorderFactory.createEmptyBorder());
+        watermarkButton.setContentAreaFilled(false);
+        watermarkButton.setVisible(true);
+
+        return watermarkButton;
     }
 
     /**
@@ -46,6 +53,7 @@ public class MainWindow extends JFrame {
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         try {
             topPanel.add(createInputJButton());
+            topPanel.add(createWatermarkJButton());
         } catch (IOException e) {
             e.printStackTrace();
         }
