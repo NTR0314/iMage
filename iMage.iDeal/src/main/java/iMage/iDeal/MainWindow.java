@@ -1,9 +1,11 @@
 package iMage.iDeal;
 
 import javax.swing.*;
+import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.text.NumberFormat;
 
 /**
  * This class is the main window for the GUI of iMage
@@ -86,7 +88,12 @@ public class MainWindow extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
         setTitle("iDeal");
-        setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
+
+        JPanel main = new JPanel();
+        main.setLayout(new BoxLayout(main, BoxLayout.Y_AXIS));
+
+        this.add(main);
+
         JPanel topPanel = new JPanel();
         topPanel.setLayout(new BoxLayout(topPanel, BoxLayout.X_AXIS));
         try {
@@ -99,11 +106,36 @@ public class MainWindow extends JFrame {
             e.printStackTrace();
         }
 
-        this.add(topPanel);
-
+        main.add(topPanel);
+        main.add(setUpWMField());
 
         this.setVisible(true);
 
+    }
+
+    private JPanel setUpWMField() {
+        NumberFormat format = NumberFormat.getInstance();
+        NumberFormatter formatter = new NumberFormatter(format);
+        formatter.setValueClass(Integer.class);
+        formatter.setMinimum(0);
+        formatter.setMaximum(Integer.MAX_VALUE);
+        formatter.setAllowsInvalid(false);
+        formatter.setCommitsOnValidEdit(true);
+        JFormattedTextField field = new JFormattedTextField(formatter);
+
+        field.setMaximumSize(new Dimension(40,25));
+
+        JLabel text = new JLabel("WM per Row");
+
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+
+        panel.add(text);
+        panel.add(Box.createRigidArea(new Dimension(5,0)));
+        panel.add(field);
+        panel.setVisible(true);
+
+        return panel;
     }
 
 
