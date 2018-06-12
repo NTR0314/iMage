@@ -2,6 +2,8 @@ package iMage.iDeal;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
@@ -22,6 +24,8 @@ public class MainWindow extends JFrame {
     private BufferedImage input;
     private BufferedImage watermark;
     private FileNameExtensionFilter pictureFile = new FileNameExtensionFilter("pictures", "jpg", "jpeg", "png");
+    private int threshold = 127;
+    private JLabel thresholdLabel = new JLabel("Threshold (127)");
 
     private JPanel createInputPanel() throws IOException {
         BufferedImage image = Utils.getImage("Input", 200, 150);
@@ -196,13 +200,23 @@ public class MainWindow extends JFrame {
     private JPanel setUpSlider() {
         JPanel panel = new JPanel();
 
-        JLabel text = new JLabel("Treshold(TODO)");
-
         JSlider slider = new JSlider(0, 255);
         slider.setPaintLabels(true);
         slider.setMajorTickSpacing(255);
+        slider.setValue(127);
 
-        panel.add(text);
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                JSlider source = (JSlider) e.getSource();
+
+                threshold = source.getValue();
+
+                thresholdLabel.setText("Treshold(" + threshold + ")");
+            }
+        });
+
+        panel.add(thresholdLabel);
         panel.add(slider);
         panel.setMaximumSize(new Dimension(500, 200));
 
