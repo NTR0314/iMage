@@ -175,14 +175,8 @@ public class MainWindow extends JFrame {
     }
 
     private JPanel setUpWMField() {
-        NumberFormat format = NumberFormat.getInstance();
-        NumberFormatter formatter = new NumberFormatter(format);
-        formatter.setValueClass(Integer.class);
-        formatter.setMinimum(0);
-        formatter.setMaximum(Integer.MAX_VALUE);
-        formatter.setAllowsInvalid(false);
-        formatter.setCommitsOnValidEdit(true);
-        JFormattedTextField field = new JFormattedTextField(formatter);
+        JTextField field = new JTextField();
+        field.setInputVerifier(new MyInputVerifier());
 
         field.setMaximumSize(new Dimension(40, 25));
 
