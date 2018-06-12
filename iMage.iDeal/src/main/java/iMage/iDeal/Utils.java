@@ -37,6 +37,14 @@ public class Utils {
 
     }
 
+    public static BufferedImage resizeImage(BufferedImage image, int width, int height) {
+        if (scaleByWidth(image.getWidth(), image.getHeight(), width, height)) {
+            return scaleWidth(image, width);
+        } else {
+            return scaleHeight(image, height);
+        }
+    }
+
     @SuppressWarnings("Duplicates")
     private static BufferedImage scaleWidth(BufferedImage input, int width) {
 
