@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -198,7 +199,7 @@ public class MainWindow extends JFrame {
 
 	}
 
-	private JPanel setUpWMField() {		
+	private JPanel setUpWMField() {
 		JTextField field = new JTextField();
 		field.setInputVerifier(new MyInputVerifier());
 
@@ -285,6 +286,26 @@ public class MainWindow extends JFrame {
 
 		JButton save = new JButton("Save");
 		save.setToolTipText("Save output image to desired location");
+		
+		save.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				JFileChooser c = new JFileChooser();
+				c.setSelectedFile(new File("output.png"));
+				
+			      int rVal = c.showSaveDialog(null);
+			      if (rVal == JFileChooser.APPROVE_OPTION) {
+			    	  try {
+			        ImageIO.write(output, "png",c.getSelectedFile());
+			    	  } catch (Exception ex) {
+			    		  JOptionPane.showMessageDialog(new JPanel(), "Looks like saving didn't work out xD");
+			    	  }
+			    } 	
+				
+				
+			}
+		});
 
 		panel.add(checkBox);
 		panel.add(Box.createRigidArea(new Dimension(5, 0)));
