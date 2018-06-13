@@ -28,11 +28,14 @@ public class MainWindow extends JFrame {
 	private BufferedImage input;
 	private BufferedImage watermarkPreview;
 	private BufferedImage watermark;
+	private BufferedImage output;
+	private BufferedImage outputPreview;
 	private FileNameExtensionFilter pictureFile = new FileNameExtensionFilter("pictures", "jpg", "jpeg", "png");
 	private int threshold = 127;
 	private JLabel thresholdLabel = new JLabel("Threshold (127)");
 	private boolean grayscaleWatermark = false;
 	private JButton waterMarkButton;
+	private JButton outputButton;
 	private int watermarksPerRow = 0;
 
 	/**
@@ -89,7 +92,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private JPanel createWatermarkPanel() throws IOException {
-		BufferedImage image = Utils.getImage("Watermark", 200, 150);
+		BufferedImage image = Utils.getImage("Watermark", 100, 100);
 		waterMarkButton = new JButton(new ImageIcon(image));
 		waterMarkButton.setBorder(BorderFactory.createEmptyBorder());
 		waterMarkButton.setContentAreaFilled(false);
@@ -106,7 +109,7 @@ public class MainWindow extends JFrame {
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
 					try {
 						watermark = ImageIO.read(fc.getSelectedFile());
-						watermarkPreview = Utils.resizeImage(watermark, 200, 150);
+						watermarkPreview = Utils.resizeImage(watermark, 100, 100);
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -128,7 +131,7 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				ImageWatermarkSupplier iwms = new ImageWatermarkSupplier(watermark, grayscaleWatermark, threshold);
 				watermark = iwms.getWatermark();
-				watermarkPreview = Utils.resizeImage(watermark, 200, 150);
+				watermarkPreview = Utils.resizeImage(watermark, 100, 100);
 				waterMarkButton.setIcon(new ImageIcon(watermarkPreview));
 
 			}
@@ -145,18 +148,18 @@ public class MainWindow extends JFrame {
 
 	private JPanel createOutputPanel() throws IOException {
 		BufferedImage image = Utils.getImage("Output", 200, 150);
-		JButton button = new JButton(new ImageIcon(image));
-		button.setBorder(BorderFactory.createEmptyBorder());
-		button.setContentAreaFilled(false);
-		button.setVisible(true);
-		button.setToolTipText("The result/output picture");
+		outputButton = new JButton(new ImageIcon(image));
+		outputButton.setBorder(BorderFactory.createEmptyBorder());
+		outputButton.setContentAreaFilled(false);
+		outputButton.setVisible(true);
+		outputButton.setToolTipText("The result/output picture");
 
 		JLabel text = new JLabel("Output");
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.add(text);
-		panel.add(button);
+		panel.add(outputButton);
 		panel.add(Box.createRigidArea(new Dimension(0, 26)));
 
 		return panel;
@@ -251,7 +254,7 @@ public class MainWindow extends JFrame {
 		return panel;
 	}
 
-	private JPanel setUpLastRow() {
+	private JPanel setUpLastRow() {		
 		JPanel panel = new JPanel();
 
 		JCheckBox checkBox = new JCheckBox("Grayscale");
@@ -270,8 +273,13 @@ public class MainWindow extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// WatermarkFilter wmf = new WatermarkFilter()
-
+				try {
+				WatermarkFilter wmf = new WatermarkFilter(watermark, watermarksPerRow);
+				output = wmf.apply(input);
+				outputButton.setIcon(new ImageIcon(Utils.resizeImage(output, 200, 150)));
+				} catch (IllegalArgumentException ex) {
+					JOptionPane.showMessageDialog(new JPanel(), "Entweder du hast vergessen Enter zu druecken, oder es sind zuviele Wasserzeichen pro Reihe ausgewaehlt,\n oder kein input-Bild geladen");
+				}
 			}
 		});
 
