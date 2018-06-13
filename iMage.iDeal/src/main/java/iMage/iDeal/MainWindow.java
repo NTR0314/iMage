@@ -1,6 +1,6 @@
 package iMage.iDeal;
 
-import org.iMage.shutterpile.impl.filters.WatermarkFilter;
+
 import org.iMage.shutterpile.impl.supplier.ImageWatermarkSupplier;
 
 import javax.imageio.ImageIO;
@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.NumberFormatter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,7 +15,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.text.NumberFormat;
 
 /**
  * This class is the main window for the GUI of iMage
@@ -26,12 +24,25 @@ import java.text.NumberFormat;
 @SuppressWarnings("Duplicates")
 public class MainWindow extends JFrame {
     private static final long serialVersionUID = 4424146395462393900L;
+    private BufferedImage inputPreview;
     private BufferedImage input;
+    private BufferedImage watermarkPreview;
     private BufferedImage watermark;
     private FileNameExtensionFilter pictureFile = new FileNameExtensionFilter("pictures", "jpg", "jpeg", "png");
     private int threshold = 127;
     private JLabel thresholdLabel = new JLabel("Threshold (127)");
     private boolean grayscaleWatermark = false;
+    private JButton waterMarkButton;
+
+    /**
+     * Main method of the GUI: sets up the main window
+     *
+     * @param args arguements
+     */
+    public static void main(String[] args) {
+        MainWindow mw = new MainWindow();
+        mw.setUp();
+    }
 
     private JPanel createInputPanel() throws IOException {
         BufferedImage image = Utils.getImage("Input", 200, 150);
@@ -50,15 +61,15 @@ public class MainWindow extends JFrame {
 
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     try {
-                        BufferedImage image = ImageIO.read(fc.getSelectedFile());
-                        input = Utils.resizeImage(image, 200, 150);
+                        input = ImageIO.read(fc.getSelectedFile());
+                        inputPreview = Utils.resizeImage(input, 200, 150);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
 
-                if (input != null) {
-                    button.setIcon(new ImageIcon(input));
+                if (inputPreview != null) {
+                    button.setIcon(new ImageIcon(inputPreview));
                 }
 
             }
@@ -77,13 +88,13 @@ public class MainWindow extends JFrame {
 
     private JPanel createWatermarkPanel() throws IOException {
         BufferedImage image = Utils.getImage("Watermark", 200, 150);
-        JButton button = new JButton(new ImageIcon(image));
-        button.setBorder(BorderFactory.createEmptyBorder());
-        button.setContentAreaFilled(false);
-        button.setVisible(true);
-        button.setToolTipText("The Watermark");
+        waterMarkButton = new JButton(new ImageIcon(image));
+        waterMarkButton.setBorder(BorderFactory.createEmptyBorder());
+        waterMarkButton.setContentAreaFilled(false);
+        waterMarkButton.setVisible(true);
+        waterMarkButton.setToolTipText("The Watermark");
 
-        button.addActionListener(new ActionListener() {
+        waterMarkButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFileChooser fc = new JFileChooser();
@@ -92,15 +103,15 @@ public class MainWindow extends JFrame {
 
                 if (returnValue == JFileChooser.APPROVE_OPTION) {
                     try {
-                        BufferedImage image = ImageIO.read(fc.getSelectedFile());
-                        watermark = Utils.resizeImage(image, 200, 150);
+                        watermark = ImageIO.read(fc.getSelectedFile());
+                        watermarkPreview = Utils.resizeImage(watermark, 200, 150);
                     } catch (IOException e1) {
                         e1.printStackTrace();
                     }
                 }
 
-                if (watermark != null) {
-                    button.setIcon(new ImageIcon(watermark));
+                if (watermarkPreview != null) {
+                    waterMarkButton.setIcon(new ImageIcon(watermarkPreview));
                 }
 
             }
@@ -113,16 +124,18 @@ public class MainWindow extends JFrame {
         init.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ImageWatermarkSupplier iwms = new ImageWatermarkSupplier(watermark, grayscaleWatermark);
-
+                ImageWatermarkSupplier iwms = new ImageWatermarkSupplier(watermark, grayscaleWatermark, threshold);
                 watermark = iwms.getWatermark();
+                watermarkPreview = Utils.resizeImage(watermark, 200, 150);
+                waterMarkButton.setIcon(new ImageIcon(watermarkPreview));
+                
             }
         });
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.add(text);
-        panel.add(button);
+        panel.add(waterMarkButton);
         panel.add(new JPanel().add(init));
 
 
@@ -147,16 +160,6 @@ public class MainWindow extends JFrame {
 
 
         return panel;
-    }
-
-    /**
-     * Main method of the GUI: sets up the main window
-     *
-     * @param args arguements
-     */
-    public static void main(String[] args) {
-        MainWindow mw = new MainWindow();
-        mw.setUp();
     }
 
     private void setUp() {
@@ -253,6 +256,17 @@ public class MainWindow extends JFrame {
 
         JButton run = new JButton("Run");
         run.setToolTipText("Start calculating watermarked image");
+        run.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		};
+        
+        
+        
         JButton save = new JButton("Save");
         save.setToolTipText("Save output image to desired location");
 
