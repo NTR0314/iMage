@@ -15,6 +15,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
 /**
@@ -31,7 +32,7 @@ public class MainWindow extends JFrame {
 	private BufferedImage watermark;
 	private BufferedImage output;
 	private BufferedImage outputPreview;
-	private FileNameExtensionFilter pictureFile = new FileNameExtensionFilter("pictures", "jpg", "jpeg", "png");
+	private FileNameExtensionFilter pictureFilter = new FileNameExtensionFilter("png files", "png");
 	private int threshold = 127;
 	private JLabel thresholdLabel = new JLabel("Threshold (127)");
 	private boolean grayscaleWatermark = false;
@@ -62,7 +63,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(pictureFile);
+				fc.setFileFilter(pictureFilter);
 				int returnValue = fc.showOpenDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -104,7 +105,7 @@ public class MainWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser fc = new JFileChooser();
-				fc.setFileFilter(pictureFile);
+				fc.setFileFilter(pictureFilter);
 				int returnValue = fc.showOpenDialog(null);
 
 				if (returnValue == JFileChooser.APPROVE_OPTION) {
@@ -293,6 +294,9 @@ public class MainWindow extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				JFileChooser c = new JFileChooser();
 				c.setSelectedFile(new File("output.png"));
+				
+				c.addChoosableFileFilter(pictureFilter);
+				c.setAcceptAllFileFilterUsed(false);
 				
 			      int rVal = c.showSaveDialog(null);
 			      if (rVal == JFileChooser.APPROVE_OPTION) {
