@@ -38,7 +38,10 @@ public class MainWindow extends JFrame {
 	private boolean grayscaleWatermark = false;
 	private JButton waterMarkButton;
 	private JButton outputButton;
+	private JButton save;
+	private JButton run;
 	private int watermarksPerRow = 0;
+	private JTextField field;
 
 	/**
 	 * Main method of the GUI: sets up the main window
@@ -135,6 +138,11 @@ public class MainWindow extends JFrame {
 				watermark = iwms.getWatermark();
 				watermarkPreview = Utils.resizeImage(watermark, 100, 100);
 				waterMarkButton.setIcon(new ImageIcon(watermarkPreview));
+				
+				if (field.getInputVerifier().verify(field)) {
+					run.setEnabled(true);
+					save.setEnabled(true);
+				}
 
 			}
 		});
@@ -201,7 +209,7 @@ public class MainWindow extends JFrame {
 	}
 
 	private JPanel setUpWMField() {
-		JTextField field = new JTextField();
+		field = new JTextField();
 		field.setInputVerifier(new MyInputVerifier());
 
 		field.addActionListener(new ActionListener() {
@@ -269,7 +277,7 @@ public class MainWindow extends JFrame {
 			}
 		});
 
-		JButton run = new JButton("Run");
+		run = new JButton("Run");
 		run.setToolTipText("Start calculating watermarked image");
 		run.addActionListener(new ActionListener() {
 
@@ -284,8 +292,10 @@ public class MainWindow extends JFrame {
 				}
 			}
 		});
+		
+		run.setEnabled(false);
 
-		JButton save = new JButton("Save");
+		save = new JButton("Save");
 		save.setToolTipText("Save output image to desired location");
 		
 		save.addActionListener(new ActionListener() {
@@ -310,6 +320,8 @@ public class MainWindow extends JFrame {
 				
 			}
 		});
+		
+		save.setEnabled(false);
 
 		panel.add(checkBox);
 		panel.add(Box.createRigidArea(new Dimension(5, 0)));
