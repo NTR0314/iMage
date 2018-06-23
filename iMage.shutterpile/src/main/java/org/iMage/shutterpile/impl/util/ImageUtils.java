@@ -11,6 +11,7 @@ import java.awt.image.ColorModel;
  * @author Dominik Fuchss
  *
  */
+@SuppressWarnings("ALL")
 public final class ImageUtils {
 
   private ImageUtils() {
