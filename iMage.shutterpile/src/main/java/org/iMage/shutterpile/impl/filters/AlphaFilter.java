@@ -6,6 +6,7 @@ import org.iMage.shutterpile.port.IFilter;
 import java.awt.image.BufferedImage;
 
 public class AlphaFilter implements IFilter {
+
     @Override
     public BufferedImage apply(BufferedImage bufferedImage) {
         BufferedImage result = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
