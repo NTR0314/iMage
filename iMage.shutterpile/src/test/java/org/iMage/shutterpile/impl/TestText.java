@@ -7,6 +7,8 @@ import org.junit.Test;
 
 import java.awt.image.BufferedImage;
 
+import static junit.framework.TestCase.assertEquals;
+
 public class TestText {
     private IWatermarkSupplier supplier;
     private BufferedImage result;
@@ -21,5 +23,7 @@ public class TestText {
         result = supplier.getWatermark();
         System.out.println("result.getHeight() = " + result.getHeight());
         System.out.println("result.getWidth() = " + result.getWidth());
+
+        assertEquals(result.getHeight(), 100);
     }
 }
