@@ -3,17 +3,27 @@ package org.iMage.shutterpile.cli;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.sun.nio.sctp.AbstractNotificationHandler;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.iMage.shutterpile.impl.BlurFilter;
+import org.iMage.shutterpile.impl.FilterPipeline;
+import org.iMage.shutterpile.impl.Rotate90Filter;
 import org.iMage.shutterpile.impl.Watermarker;
+import org.iMage.shutterpile.impl.filters.AlphaFilter;
+import org.iMage.shutterpile.impl.filters.GrayscaleFilter;
+import org.iMage.shutterpile.impl.filters.ThresholdFilter;
+import org.iMage.shutterpile.impl.filters.WatermarkFilter;
 import org.iMage.shutterpile.impl.supplier.ImageWatermarkSupplier;
+import org.iMage.shutterpile.port.IFilter;
 import org.iMage.shutterpile.port.IWatermarkSupplier;
 import org.iMage.shutterpile.port.IWatermarker;
 
@@ -33,6 +43,7 @@ public final class App {
   private static final String CMD_OPTION_RETURN_IMAGE = "r";
   private static final String CMD_OPTION_WATERMARKS_PER_ROW = "n";
   private static final String CMD_OPTION_COLORED = "c";
+  private static final String CMD_OPTION_FILTERS = "p";
 
   private static final int DEFAULT_WATERMARKS_PER_ROW = 5;
 
@@ -89,6 +100,10 @@ public final class App {
     IWatermarkSupplier wms = new ImageWatermarkSupplier(watermarkInput, !colored);
     IWatermarker wm = new Watermarker(wms);
     BufferedImage outputImage = wm.generate(input, watermarksPerRow);
+
+    if (cmd.hasOption(App.CMD_OPTION_FILTERS)) {
+      outputImage = handleParameterP(cmd.getOptionValue(App.CMD_OPTION_FILTERS), watermarkInput, watermarksPerRow, input);
+    }
 
     try {
       ImageIO.write(outputImage, "png", output);
@@ -166,8 +181,38 @@ public final class App {
     opt.setType(Boolean.class);
     options.addOption(opt);
 
+    opt = new Option(App.CMD_OPTION_FILTERS, "filters", true, "filters to apply");
+    opt.setRequired(false);
+    opt.setType(String.class);
+    options.addOption(opt);
+
     CommandLineParser parser = new DefaultParser();
     return parser.parse(options, args);
+  }
+
+  private static BufferedImage handleParameterP(String arguments, BufferedImage watermark, int watermarksPerRow, BufferedImage input) {
+    FilterPipeline fp = new FilterPipeline();
+
+    char[] filterChars = arguments.toCharArray();
+
+    for (char charackter:filterChars) {
+      switch (charackter) {
+        case 'w': fp.addFilter(new WatermarkFilter(watermark, watermarksPerRow));
+        break;
+        case 'g': fp.addFilter(new GrayscaleFilter());
+        break;
+        case 't': fp.addFilter(new ThresholdFilter(127));
+        break;
+        case 'a': fp.addFilter(new AlphaFilter());
+        break;
+        case 'b': fp.addFilter(new BlurFilter());
+        break;
+        case 'r': fp.addFilter(new Rotate90Filter());
+        break;
+      }
+    }
+
+    return fp.run(input);
   }
 
 }
