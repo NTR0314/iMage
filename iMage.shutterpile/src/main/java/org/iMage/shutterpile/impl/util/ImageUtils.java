@@ -9,7 +9,6 @@ import java.awt.image.ColorModel;
  * This class contains some useful methods to work with {@link BufferedImage BufferedImages}.
  *
  * @author Dominik Fuchss
- *
  */
 @SuppressWarnings("ALL")
 public final class ImageUtils {
