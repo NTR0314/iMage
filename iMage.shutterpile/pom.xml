@@ -5,7 +5,8 @@
     <artifactId>iMage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>iMage.shutterpile</artifactId>
+    <groupId>swt1.ub5.a1</groupId>
+  <artifactId>2053536</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>swt1</groupId>
