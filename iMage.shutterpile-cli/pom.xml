@@ -5,7 +5,8 @@
     <artifactId>iMage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>iMage.shutterpile-cli</artifactId>
+	<groupId>swt1.ub5.a2</groupId>
+  <artifactId>2053536</artifactId>
   <dependencies>
   	<dependency>
   		<groupId>commons-cli</groupId>
