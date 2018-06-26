@@ -8,7 +8,7 @@ public abstract class AbstractWatermarkSupplier implements IWatermarkSupplier {
     //TODO implement as template-method
     public BufferedImage getWatermark() {
         BufferedImage watermark = createWatermark();
-        return null;
+        return watermark;
     }
 
     public abstract BufferedImage createWatermark();

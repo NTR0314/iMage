@@ -16,7 +16,7 @@ import org.iMage.shutterpile.port.IWatermarkSupplier;
  * @author Dominik Fuchss
  *
  */
-public final class ImageWatermarkSupplier implements IWatermarkSupplier {
+public final class ImageWatermarkSupplier extends AbstractWatermarkSupplier {
 
   /**
    * This factor indicates by how much the transparency is increased. The new value alpha' is
@@ -75,10 +75,7 @@ public final class ImageWatermarkSupplier implements IWatermarkSupplier {
 	  
   }
 
-  
-
-  @Override
-  public BufferedImage getWatermark() {
+  public BufferedImage createWatermark() {
     if (this.createdWatermark == null) {
       // Create ARGB image as filters need (A)RGB
       BufferedImage watermark = ImageUtils.createARGBImage(this.watermarkInput);
