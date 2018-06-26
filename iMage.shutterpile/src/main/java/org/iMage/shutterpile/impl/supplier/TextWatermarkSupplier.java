@@ -46,11 +46,6 @@ public class TextWatermarkSupplier extends AbstractWatermarkSupplier {
         g2d.setColor(Color.BLACK);
         g2d.drawString(text, 0, fm.getAscent());
         g2d.dispose();
-        try {
-            ImageIO.write(result, "png", new File("Text.png"));
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
 
         return result;
     }
